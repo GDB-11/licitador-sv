@@ -4,9 +4,10 @@
 
 	interface PublicLayoutProps {
 		children: Snippet;
+		data: { year: number };
 	}
 
-	let { children, year }: PublicLayoutProps & { year: number } = $props();
+	let { children, data }: PublicLayoutProps = $props();
 </script>
 
 <div
@@ -67,7 +68,7 @@
 	<!-- Footer público -->
 	<footer class="p-4 flex-shrink-0">
 		<div class="container mx-auto text-center text-sm text-gray-600 dark:text-gray-400">
-			<p>© {year} Licitador - Sistema de Contrataciones Públicas - Ley N° 32069</p>
+			<p>© {data.year} Licitador - Sistema de Contrataciones Públicas - Ley N° 32069</p>
 		</div>
 	</footer>
 </div>
