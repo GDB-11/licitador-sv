@@ -10,10 +10,10 @@
 </script>
 
 <div
-	class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800"
+	class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 flex flex-col"
 >
 	<!-- Header público -->
-	<header class="absolute top-0 left-0 right-0 p-4 z-10">
+	<header class="p-4 flex-shrink-0">
 		<nav class="container mx-auto flex justify-between items-center">
 			<a href="/" class="flex items-center space-x-2">
 				<div
@@ -60,12 +60,12 @@
 	</header>
 
 	<!-- Contenido de las páginas públicas -->
-	<main class="min-h-screen flex items-center justify-center px-4 py-12">
+	<main class="flex-1 flex items-center justify-center px-4 py-8">
 		{@render children()}
 	</main>
 
 	<!-- Footer público -->
-	<footer class="absolute bottom-0 left-0 right-0 p-4">
+	<footer class="p-4 flex-shrink-0">
 		<div class="container mx-auto text-center text-sm text-gray-600 dark:text-gray-400">
 			<p>© 2025 Licitador SV - Sistema de Contrataciones Públicas - Ley N° 32069</p>
 		</div>

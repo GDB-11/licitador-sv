@@ -169,7 +169,7 @@
 	</div>
 
 	<!-- Footer -->
-	<div class="mt-8 text-center text-sm text-gray-600 dark:text-gray-400">
+	<div class="mt-8 mb-4 text-center text-sm text-gray-600 dark:text-gray-400">
 		<p>
 			Al iniciar sesión, aceptas nuestros
 			<Link href="/terminos" variant="ghost">Términos de Servicio</Link>
