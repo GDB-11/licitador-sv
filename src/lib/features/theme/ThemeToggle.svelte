@@ -1,3 +1,4 @@
+<!-- src/lib/features/theme/ThemeToggle.svelte -->
 <script lang="ts">
 	import { theme } from './stores/theme.svelte';
 

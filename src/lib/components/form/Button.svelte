@@ -1,3 +1,4 @@
+<!-- src/lib/components/form/Button.svelte -->
 <script lang="ts">
 	import type { Snippet } from 'svelte';
 

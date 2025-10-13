@@ -1,0 +1,1 @@
+<!-- src/routes/(protected)/+layout.svelte -->

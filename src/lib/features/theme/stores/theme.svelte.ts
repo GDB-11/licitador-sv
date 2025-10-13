@@ -1,4 +1,4 @@
-// theme.svelte.ts
+// src/lib/features/theme/stores/theme.svelte.ts
 import { writable } from 'svelte/store';
 import { browser } from '$app/environment';
 

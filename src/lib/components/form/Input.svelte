@@ -1,3 +1,4 @@
+<!-- src/lib/components/form/Input.svelte -->
 <script lang="ts">
 	interface InputProps {
 		type?: 'text' | 'email' | 'number' | 'tel';

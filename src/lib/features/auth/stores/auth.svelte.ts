@@ -1,3 +1,4 @@
+// src/lib/features/auth/stores/auth.svelte.ts
 interface User {
 	id: string;
 	email: string;

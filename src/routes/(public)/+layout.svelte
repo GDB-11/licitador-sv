@@ -1,3 +1,4 @@
+<!-- src/routes/(public)/+layout.svelte -->
 <script lang="ts">
 	import type { Snippet } from 'svelte';
 	import { ThemeToggle } from '$lib/features/theme';

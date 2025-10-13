@@ -1,3 +1,4 @@
+<!-- src/lib/features/auth/LoginPage.svelte -->
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
@@ -98,7 +99,7 @@
 			</svg>
 		</div>
 		<h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">Licitador</h1>
-		<p class="text-gray-600 dark:text-gray-400">Sistema de Contrataciones Públicas</p>
+		<p class="text-gray-600 dark:text-gray-400">Sistema de apoyo para Contrataciones Públicas</p>
 	</div>
 
 	<!-- Card del formulario -->

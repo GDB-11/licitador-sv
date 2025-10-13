@@ -1,3 +1,4 @@
+<!-- src/lib/components/ui/Link.svelte -->
 <script lang="ts">
 	import type { Snippet } from 'svelte';
 

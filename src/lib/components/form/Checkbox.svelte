@@ -1,3 +1,4 @@
+<!-- src/lib/components/form/Checkbox.svelte -->
 <script lang="ts">
 	import type { Snippet } from 'svelte';
 
