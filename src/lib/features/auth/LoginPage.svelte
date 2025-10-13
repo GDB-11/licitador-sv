@@ -142,7 +142,7 @@
 			<div class="flex items-center justify-between">
 				<Checkbox bind:checked={rememberMe}>Recordarme</Checkbox>
 
-				<Link href="/recuperar-password" variant="primary">¿Olvidaste tu contraseña?</Link>
+				<!-- <Link href="/recuperar-password" variant="primary">¿Olvidaste tu contraseña?</Link> -->
 			</div>
 
 			<Button type="submit" variant="primary" fullWidth loading={authStore.isLoading}>
@@ -151,7 +151,7 @@
 		</form>
 
 		<!-- Divider -->
-		<div class="relative my-6">
+		<!-- <div class="relative my-6">
 			<div class="absolute inset-0 flex items-center">
 				<div class="w-full border-t border-gray-300 dark:border-gray-600"></div>
 			</div>
@@ -160,12 +160,12 @@
 					¿No tienes una cuenta?
 				</span>
 			</div>
-		</div>
+		</div> -->
 
 		<!-- Registro -->
-		<div class="text-center">
+		<!-- <div class="text-center">
 			<Link href="/registro" variant="secondary">Crear cuenta nueva</Link>
-		</div>
+		</div> -->
 	</div>
 
 	<!-- Footer -->

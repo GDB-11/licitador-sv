@@ -44,7 +44,7 @@
 			<div class="flex items-center space-x-3">
 				<!-- Theme Toggle -->
 				<ThemeToggle />
-                <a				
+                <!-- <a				
 					href="/login"
 					class="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 font-medium transition-colors hidden sm:inline-block"
 				>
@@ -55,7 +55,7 @@
 					class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 font-medium transition-colors"
 				>
 					Registrarse
-				</a>
+				</a> -->
 			</div>
 		</nav>
 	</header>
