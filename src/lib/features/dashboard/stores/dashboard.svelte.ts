@@ -5,6 +5,7 @@ import { writable } from 'svelte/store';
 export interface Estadisticas {
 	documentosGenerados: number;
 	perfilCompleto: number;
+	empresasConsorciadas: number;
 }
 
 export interface DocumentoReciente {
@@ -66,7 +67,8 @@ class DashboardStore {
 
 			this.data.estadisticas = {
 				documentosGenerados: 24,
-				perfilCompleto: 85
+				perfilCompleto: 85,
+				empresasConsorciadas: 2
 			};
 		} catch (err) {
 			this.data.error = err instanceof Error ? err.message : 'Error al cargar estadísticas';

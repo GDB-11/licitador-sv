@@ -9,6 +9,7 @@
 		fullWidth?: boolean;
 		disabled?: boolean;
 		loading?: boolean;
+		className?: string;
 		onclick?: () => void;
 		children?: Snippet;
 	}
@@ -20,6 +21,7 @@
 		fullWidth = false,
 		disabled = false,
 		loading = false,
+		className = '',
 		onclick,
 		children
 	}: ButtonProps = $props();
@@ -48,7 +50,7 @@
 
 <button
 	{type}
-	class="{baseClasses} {variantClasses[variant]} {sizeClasses[size]} {fullWidthClass} {disabled ||
+	class="{className} {baseClasses} {variantClasses[variant]} {sizeClasses[size]} {fullWidthClass} {disabled ||
 	loading
 		? disabledClasses
 		: ''}"

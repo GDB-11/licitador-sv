@@ -1,6 +1,7 @@
 <!-- src/lib/features/dashboard/components/DashboardHeader.svelte -->
 <script lang="ts">
-	import { ThemeToggle } from '$lib/features/theme';
+	import Link from '$lib/components/ui/Link.svelte';
+import { ThemeToggle } from '$lib/features/theme';
 
 	interface DashboardHeaderProps {
 		nombreEmpresa?: string;
@@ -21,7 +22,7 @@
 	<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 		<div class="flex justify-between items-center h-16">
 			<!-- Logo y título -->
-			<div class="flex items-center space-x-3">
+			<a href="/dashboard" class="flex items-center space-x-3">
 				<div
 					class="w-10 h-10 bg-indigo-600 dark:bg-indigo-500 rounded-lg flex items-center justify-center"
 				>
@@ -44,7 +45,7 @@
 					<h1 class="text-xl font-bold text-gray-900 dark:text-white">Licitador</h1>
 					<p class="text-xs text-gray-500 dark:text-gray-400">{nombreEmpresa}</p>
 				</div>
-			</div>
+			</a>
 
 			<!-- Menú usuario -->
 			<div class="flex items-center space-x-4">
