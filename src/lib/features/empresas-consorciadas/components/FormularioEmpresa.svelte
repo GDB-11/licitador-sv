@@ -1,7 +1,7 @@
 <!-- src/lib/features/empresas-consorciadas/components/FormularioEmpresa.svelte -->
 <script lang="ts">
 	import type { EmpresaConsorciada, EmpresaConsorciadaFormData, ValidationErrors } from '../types';
-
+	
 	interface FormularioEmpresaProps {
 		empresa?: EmpresaConsorciada | null;
 		onGuardar: (data: EmpresaConsorciadaFormData) => Promise<void>;
@@ -9,15 +9,14 @@
 		isSaving: boolean;
 		validationErrors: ValidationErrors;
 	}
-
+	
 	let { empresa = null, onGuardar, onCancelar, isSaving, validationErrors }: FormularioEmpresaProps = $props();
-
+	
 	// Estado del formulario
 	let formData = $state<EmpresaConsorciadaFormData>({
 		ruc: empresa?.ruc || '',
 		razonSocial: empresa?.razonSocial || '',
 		nombreComercial: empresa?.nombreComercial || '',
-		porcentajeParticipacion: empresa?.porcentajeParticipacion || 0,
 		domicilioFiscal: empresa?.domicilioFiscal || '',
 		representanteLegal: {
 			dni: empresa?.representanteLegal.dni || '',
@@ -28,14 +27,17 @@
 			telefono: empresa?.contacto.telefono || '',
 			correoElectronico: empresa?.contacto.correoElectronico || ''
 		},
-		esLider: empresa?.esLider || false
+		actividadPrincipal: empresa?.actividadPrincipal || '',
+		registroRNP: empresa?.registroRNP || '',
+		vigenciaRNPHasta: empresa?.vigenciaRNPHasta || '',
+		activo: empresa?.activo ?? true
 	});
-
+	
 	const handleSubmit = async (e: Event) => {
 		e.preventDefault();
 		await onGuardar(formData);
 	};
-
+	
 	const getErrorMessage = (field: string): string | undefined => {
 		return validationErrors[field];
 	};
@@ -45,13 +47,13 @@
 	<!-- Header -->
 	<div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
 		<h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-			{empresa ? 'Editar Empresa Consorciada' : 'Nueva Empresa Consorciada'}
+			{empresa ? 'Editar Empresa' : 'Nueva Empresa'}
 		</h3>
 		<p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
-			{empresa ? 'Actualiza los datos de la empresa' : 'Completa los datos de la empresa que forma parte del consorcio'}
+			{empresa ? 'Actualiza los datos de la empresa' : 'Registra los datos de una nueva empresa'}
 		</p>
 	</div>
-
+	
 	<!-- Formulario -->
 	<form onsubmit={handleSubmit} class="p-6 space-y-6">
 		<!-- Datos Generales -->
@@ -93,29 +95,21 @@
 						<p class="mt-1 text-sm text-red-600 dark:text-red-400">{getErrorMessage('ruc')}</p>
 					{/if}
 				</div>
-
-				<!-- Porcentaje de Participación -->
+				
+				<!-- Registro RNP -->
 				<div>
-					<label for="porcentaje" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-						Porcentaje de Participación (%) <span class="text-red-600">*</span>
+					<label for="registroRNP" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+						Registro RNP
 					</label>
 					<input
-						type="number"
-						id="porcentaje"
-						bind:value={formData.porcentajeParticipacion}
-						min="0"
-						max="100"
-						step="0.01"
-						placeholder="50"
-						class="w-full px-4 py-2 border {getErrorMessage('porcentajeParticipacion')
-							? 'border-red-500 dark:border-red-500'
-							: 'border-gray-300 dark:border-gray-600'} rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+						type="text"
+						id="registroRNP"
+						bind:value={formData.registroRNP}
+						placeholder="A123456"
+						class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
 					/>
-					{#if getErrorMessage('porcentajeParticipacion')}
-						<p class="mt-1 text-sm text-red-600 dark:text-red-400">{getErrorMessage('porcentajeParticipacion')}</p>
-					{/if}
 				</div>
-
+				
 				<!-- Razón Social -->
 				<div class="md:col-span-2">
 					<label for="razonSocial" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -134,21 +128,53 @@
 						<p class="mt-1 text-sm text-red-600 dark:text-red-400">{getErrorMessage('razonSocial')}</p>
 					{/if}
 				</div>
-
+				
 				<!-- Nombre Comercial -->
-				<div class="md:col-span-2">
+				<div>
 					<label for="nombreComercial" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-						Nombre Comercial (Opcional)
+						Nombre Comercial
 					</label>
 					<input
 						type="text"
 						id="nombreComercial"
 						bind:value={formData.nombreComercial}
-						placeholder="Nombre comercial de la empresa"
+						placeholder="Nombre comercial"
 						class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
 					/>
 				</div>
-
+				
+				<!-- Vigencia RNP -->
+				<div>
+					<label for="vigenciaRNP" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+						Vigencia RNP hasta
+					</label>
+					<input
+						type="date"
+						id="vigenciaRNP"
+						bind:value={formData.vigenciaRNPHasta}
+						class="w-full px-4 py-2 border {getErrorMessage('vigenciaRNPHasta')
+							? 'border-red-500 dark:border-red-500'
+							: 'border-gray-300 dark:border-gray-600'} rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+					/>
+					{#if getErrorMessage('vigenciaRNPHasta')}
+						<p class="mt-1 text-sm text-red-600 dark:text-red-400">{getErrorMessage('vigenciaRNPHasta')}</p>
+					{/if}
+				</div>
+				
+				<!-- Actividad Principal -->
+				<div class="md:col-span-2">
+					<label for="actividadPrincipal" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+						Actividad Principal
+					</label>
+					<input
+						type="text"
+						id="actividadPrincipal"
+						bind:value={formData.actividadPrincipal}
+						placeholder="Construcción de edificios completos"
+						class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+					/>
+				</div>
+				
 				<!-- Domicilio Fiscal -->
 				<div class="md:col-span-2">
 					<label for="domicilioFiscal" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -167,23 +193,9 @@
 						<p class="mt-1 text-sm text-red-600 dark:text-red-400">{getErrorMessage('domicilioFiscal')}</p>
 					{/if}
 				</div>
-
-				<!-- Es Líder -->
-				<div class="md:col-span-2">
-					<label class="flex items-center space-x-2 cursor-pointer">
-						<input
-							type="checkbox"
-							bind:checked={formData.esLider}
-							class="w-4 h-4 text-blue-600 bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 rounded focus:ring-blue-500"
-						/>
-						<span class="text-sm font-medium text-gray-700 dark:text-gray-300">
-							¿Es la empresa líder del consorcio?
-						</span>
-					</label>
-				</div>
 			</div>
 		</div>
-
+		
 		<!-- Representante Legal -->
 		<div>
 			<h4 class="text-sm font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
@@ -223,7 +235,7 @@
 						<p class="mt-1 text-sm text-red-600 dark:text-red-400">{getErrorMessage('representanteLegal.dni')}</p>
 					{/if}
 				</div>
-
+				
 				<!-- Cargo -->
 				<div>
 					<label for="cargo" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -242,7 +254,7 @@
 						<p class="mt-1 text-sm text-red-600 dark:text-red-400">{getErrorMessage('representanteLegal.cargo')}</p>
 					{/if}
 				</div>
-
+				
 				<!-- Nombres Completos -->
 				<div class="md:col-span-2">
 					<label for="nombresCompletos" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -263,7 +275,7 @@
 				</div>
 			</div>
 		</div>
-
+		
 		<!-- Datos de Contacto -->
 		<div>
 			<h4 class="text-sm font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
@@ -303,7 +315,7 @@
 						<p class="mt-1 text-sm text-red-600 dark:text-red-400">{getErrorMessage('contacto.telefono')}</p>
 					{/if}
 				</div>
-
+				
 				<!-- Correo Electrónico -->
 				<div>
 					<label for="correoElectronico" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -324,7 +336,7 @@
 				</div>
 			</div>
 		</div>
-
+		
 		<!-- Botones de Acción -->
 		<div class="flex items-center justify-end space-x-3 pt-4 border-t border-gray-200 dark:border-gray-700">
 			<button

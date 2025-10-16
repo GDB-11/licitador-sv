@@ -1,9 +1,9 @@
-<!-- src\lib\features\empresas-consorciadas\EmpresasConsorciadasPage.svelte -->
+<!-- src/lib/features/empresas-consorciadas/EmpresasConsorciadasPage.svelte -->
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { empresasConsorciadasStore } from '$lib/features/empresas-consorciadas/stores/empresas-consorciadas.svelte';
 	import ListaEmpresas from '$lib/features/empresas-consorciadas/components/ListaEmpresas.svelte';
-	import ResumenConsorcio from '$lib/features/empresas-consorciadas/components/ResumenConsorcio.svelte';
+	import ResumenEmpresas from '$lib/features/empresas-consorciadas/components/ResumenEmpresas.svelte';
 	import FormularioEmpresa from '$lib/features/empresas-consorciadas/components/FormularioEmpresa.svelte';
 	import type { EmpresaConsorciadaFormData, EmpresaConsorciada } from '$lib/features/empresas-consorciadas/types';
 
@@ -32,12 +32,20 @@
 	};
 
 	const handleEliminar = async (id: number) => {
-		if (confirm('¿Estás seguro de que deseas eliminar esta empresa del consorcio?')) {
+		if (confirm('¿Estás seguro de que deseas eliminar esta empresa? Esta acción la marcará como inactiva.')) {
 			const success = await empresasConsorciadasStore.eliminarEmpresa(id);
 			if (success) {
 				// Opcional: Mostrar mensaje de éxito
 			}
 		}
+	};
+
+	const handleToggleActivo = async (id: number) => {
+		await empresasConsorciadasStore.toggleEmpresaActiva(id);
+	};
+
+	const handleToggleFiltro = () => {
+		empresasConsorciadasStore.setFiltroActivas(!empresasConsorciadasStore.filtroActivas);
 	};
 
 	const handleGuardar = async (data: EmpresaConsorciadaFormData) => {
@@ -88,10 +96,10 @@
 								d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z"
 							/>
 						</svg>
-						Empresas Consorciadas
+						Gestión de Empresas
 					</h1>
 					<p class="mt-2 text-gray-600 dark:text-gray-400">
-						Gestiona las empresas que forman parte del consorcio para el Formato 1
+						Administra las empresas disponibles para formar consorcios en licitaciones públicas
 					</p>
 				</div>
 
@@ -141,12 +149,16 @@
 			</div>
 		{/if}
 
-		<!-- Resumen del Consorcio -->
+		<!-- Resumen de Empresas -->
 		<div class="mb-8">
-			<ResumenConsorcio resumen={empresasConsorciadasStore.resumen} />
+			<ResumenEmpresas 
+				resumen={empresasConsorciadasStore.resumen}
+				onToggleFiltro={handleToggleFiltro}
+				mostrandoSoloActivas={empresasConsorciadasStore.filtroActivas}
+			/>
 		</div>
 
-		<!-- Formulario (Modal) -->
+		<!-- Formulario -->
 		{#if mostrarFormulario}
 			<div class="mb-8">
 				<FormularioEmpresa
@@ -164,11 +176,12 @@
 			empresas={empresasConsorciadasStore.empresas}
 			onEditar={handleEditar}
 			onEliminar={handleEliminar}
+			onToggleActivo={handleToggleActivo}
 			isLoading={empresasConsorciadasStore.isLoading}
 		/>
 
 		<!-- Información Adicional -->
-		{#if empresasConsorciadasStore.empresas.length > 0}
+		{#if empresasConsorciadasStore.todasLasEmpresas.length > 0}
 			<div class="mt-8 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-6">
 				<div class="flex items-start">
 					<svg
@@ -187,17 +200,45 @@
 					</svg>
 					<div>
 						<h4 class="text-sm font-semibold text-blue-900 dark:text-blue-300 mb-2">
-							Información importante sobre el consorcio
+							Información importante sobre el registro de empresas
 						</h4>
 						<ul class="text-sm text-blue-800 dark:text-blue-400 space-y-1 list-disc list-inside">
-							<li>El porcentaje total de participación debe sumar exactamente 100%</li>
-							<li>Debe designarse una empresa como líder del consorcio</li>
-							<li>Todos los datos serán utilizados para generar el Formato 1 automáticamente</li>
-							<li>Asegúrate de que la información sea correcta antes de generar documentos oficiales</li>
+							<li>Registra aquí todas las empresas que podrían participar en consorcios</li>
+							<li>Los porcentajes de participación se definirán al momento de generar los documentos para cada licitación</li>
+							<li>Mantén actualizada la información del RNP (Registro Nacional de Proveedores)</li>
+							<li>Las empresas marcadas como inactivas no aparecerán disponibles para formar consorcios</li>
+							<li>Verifica que los datos del representante legal estén siempre actualizados</li>
 						</ul>
 					</div>
 				</div>
 			</div>
 		{/if}
+
+		<!-- Nota sobre el uso de las empresas -->
+		<div class="mt-4 bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+			<div class="flex items-start">
+				<svg
+					xmlns="http://www.w3.org/2000/svg"
+					fill="none"
+					viewBox="0 0 24 24"
+					stroke-width="2"
+					stroke="currentColor"
+					class="w-5 h-5 text-gray-500 dark:text-gray-400 mr-2 mt-0.5 flex-shrink-0"
+				>
+					<path
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z"
+					/>
+				</svg>
+				<div class="text-sm text-gray-600 dark:text-gray-400">
+					<p>
+						<strong>¿Cómo se usan estas empresas?</strong> Al generar documentos para una licitación específica, 
+						podrás seleccionar qué empresas formarán el consorcio, definir sus porcentajes de participación, 
+						designar la empresa líder, y generar automáticamente todos los formatos necesarios con la información aquí registrada.
+					</p>
+				</div>
+			</div>
+		</div>
 	</div>
 </div>

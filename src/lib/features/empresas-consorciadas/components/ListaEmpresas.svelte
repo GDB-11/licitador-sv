@@ -6,20 +6,27 @@
 		empresas: EmpresaConsorciada[];
 		onEditar: (empresa: EmpresaConsorciada) => void;
 		onEliminar: (id: number) => void;
+		onToggleActivo: (id: number) => void;
 		isLoading?: boolean;
 	}
 
-	let { empresas, onEditar, onEliminar, isLoading = false }: ListaEmpresasProps = $props();
+	let { empresas, onEditar, onEliminar, onToggleActivo, isLoading = false }: ListaEmpresasProps = $props();
+	
+	// Función para verificar si el RNP está vencido
+	const isRNPVencido = (fecha?: string) => {
+		if (!fecha) return false;
+		return new Date(fecha) < new Date();
+	};
 </script>
 
 <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
 	<!-- Header -->
 	<div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
 		<h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-			Empresas Consorciadas
+			Empresas Registradas
 		</h3>
 		<p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
-			Listado de empresas que forman parte del consorcio
+			Listado de empresas disponibles para formar consorcios
 		</p>
 	</div>
 
@@ -49,10 +56,10 @@
 					/>
 				</svg>
 				<p class="mt-4 text-gray-600 dark:text-gray-400 font-medium">
-					No hay empresas consorciadas registradas
+					No hay empresas registradas
 				</p>
 				<p class="text-sm text-gray-500 dark:text-gray-500 mt-1">
-					Agrega la primera empresa para formar el consorcio
+					Agrega empresas para poder formar consorcios en las licitaciones
 				</p>
 			</div>
 		{:else}
@@ -66,7 +73,7 @@
 							RUC
 						</th>
 						<th class="px-6 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
-							Participación
+							RNP
 						</th>
 						<th class="px-6 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
 							Representante
@@ -81,7 +88,7 @@
 				</thead>
 				<tbody class="divide-y divide-gray-200 dark:divide-gray-700">
 					{#each empresas as empresa (empresa.id)}
-						<tr class="hover:bg-blue-50/50 dark:hover:bg-blue-900/10 transition-colors">
+						<tr class="hover:bg-blue-50/50 dark:hover:bg-blue-900/10 transition-colors {!empresa.activo ? 'opacity-50' : ''}">
 							<td class="px-6 py-4">
 								<div class="flex items-center">
 									<div>
@@ -93,6 +100,11 @@
 												{empresa.nombreComercial}
 											</div>
 										{/if}
+										{#if empresa.actividadPrincipal}
+											<div class="text-xs text-gray-500 dark:text-gray-500">
+												{empresa.actividadPrincipal}
+											</div>
+										{/if}
 									</div>
 								</div>
 							</td>
@@ -102,17 +114,30 @@
 								</span>
 							</td>
 							<td class="px-6 py-4">
-								<div class="flex items-center space-x-2">
-									<span class="text-sm font-semibold text-gray-900 dark:text-white">
-										{empresa.porcentajeParticipacion}%
-									</span>
-									<div class="w-16 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-										<div
-											class="bg-blue-600 dark:bg-blue-500 h-2 rounded-full transition-all"
-											style="width: {empresa.porcentajeParticipacion}%"
-										></div>
+								{#if empresa.registroRNP}
+									<div>
+										<span class="text-sm text-gray-900 dark:text-gray-100">
+											{empresa.registroRNP}
+										</span>
+										{#if empresa.vigenciaRNPHasta}
+											<div class="text-xs mt-1">
+												{#if isRNPVencido(empresa.vigenciaRNPHasta)}
+													<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400">
+														Vencido
+													</span>
+												{:else}
+													<span class="text-gray-500 dark:text-gray-400">
+														Vigente hasta: {new Date(empresa.vigenciaRNPHasta).toLocaleDateString('es-PE')}
+													</span>
+												{/if}
+											</div>
+										{/if}
 									</div>
-								</div>
+								{:else}
+									<span class="text-sm text-gray-400 dark:text-gray-500">
+										No registrado
+									</span>
+								{/if}
 							</td>
 							<td class="px-6 py-4">
 								<div class="text-sm text-gray-900 dark:text-white">
@@ -123,27 +148,19 @@
 								</div>
 							</td>
 							<td class="px-6 py-4">
-								{#if empresa.esLider}
-									<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400">
-										<svg
-											xmlns="http://www.w3.org/2000/svg"
-											fill="none"
-											viewBox="0 0 24 24"
-											stroke-width="2"
-											stroke="currentColor"
-											class="w-3 h-3 mr-1"
-										>
-											<path
-												stroke-linecap="round"
-												stroke-linejoin="round"
-												d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z"
-											/>
+								{#if empresa.activo}
+									<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">
+										<svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+											<circle cx="10" cy="10" r="5" />
 										</svg>
-										Líder
+										Activa
 									</span>
 								{:else}
 									<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300">
-										Miembro
+										<svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+											<circle cx="10" cy="10" r="5" />
+										</svg>
+										Inactiva
 									</span>
 								{/if}
 							</td>
@@ -168,6 +185,21 @@
 												d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"
 											/>
 										</svg>
+									</button>
+									<button
+										onclick={() => onToggleActivo(empresa.id)}
+										class="p-1.5 {empresa.activo ? 'text-amber-600 hover:bg-amber-50 dark:text-amber-400 dark:hover:bg-amber-900/30' : 'text-green-600 hover:bg-green-50 dark:text-green-400 dark:hover:bg-green-900/30'} rounded-lg transition-colors"
+										title="{empresa.activo ? 'Desactivar' : 'Activar'} empresa"
+									>
+										{#if empresa.activo}
+											<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
+												<path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-9.75 0h9.75" />
+											</svg>
+										{:else}
+											<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
+												<path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+											</svg>
+										{/if}
 									</button>
 									<button
 										onclick={() => onEliminar(empresa.id)}

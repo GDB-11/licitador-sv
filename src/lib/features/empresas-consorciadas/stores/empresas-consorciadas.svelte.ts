@@ -4,7 +4,7 @@ import type {
 	EmpresaConsorciadaFormData,
 	EmpresasConsorciadasState,
 	ValidationErrors,
-	ConsorcioResumen
+	EmpresasResumen
 } from '../types';
 
 class EmpresasConsorciadasStore {
@@ -15,11 +15,17 @@ class EmpresasConsorciadasStore {
 		isSaving: false,
 		error: null,
 		validationErrors: {},
-		porcentajeTotal: 0
+		filtroActivas: true
 	});
 
 	// Getters reactivos
 	get empresas() {
+		return this.state.filtroActivas 
+			? this.state.empresas.filter(e => e.activo)
+			: this.state.empresas;
+	}
+
+	get todasLasEmpresas() {
 		return this.state.empresas;
 	}
 
@@ -43,28 +49,33 @@ class EmpresasConsorciadasStore {
 		return this.state.validationErrors;
 	}
 
-	get porcentajeTotal() {
-		return this.state.porcentajeTotal;
+	get filtroActivas() {
+		return this.state.filtroActivas;
 	}
 
-	get resumen(): ConsorcioResumen {
-		const empresaLider = this.state.empresas.find((e) => e.esLider) || null;
-		const porcentajeTotal = this.calcularPorcentajeTotal();
+	get resumen(): EmpresasResumen {
+		const totalEmpresas = this.state.empresas.length;
+		const empresasActivas = this.state.empresas.filter(e => e.activo).length;
+		const empresasInactivas = totalEmpresas - empresasActivas;
+		const empresasConRNPVigente = this.state.empresas.filter(e => {
+			if (!e.vigenciaRNPHasta) return false;
+			return new Date(e.vigenciaRNPHasta) > new Date();
+		}).length;
 		
 		return {
-			totalEmpresas: this.state.empresas.length,
-			porcentajeTotal,
-			empresaLider,
-			esValido: porcentajeTotal === 100 && empresaLider !== null
+			totalEmpresas,
+			empresasActivas,
+			empresasInactivas,
+			empresasConRNPVigente
 		};
 	}
 
-	// Calcular porcentaje total
-	private calcularPorcentajeTotal(): number {
-		return this.state.empresas.reduce((total, empresa) => total + empresa.porcentajeParticipacion, 0);
+	// Cambiar filtro de empresas activas
+	setFiltroActivas(mostrarSoloActivas: boolean) {
+		this.state.filtroActivas = mostrarSoloActivas;
 	}
 
-	// Cargar empresas consorciadas desde API
+	// Cargar empresas desde API
 	async fetchEmpresas() {
 		this.state.isLoading = true;
 		this.state.error = null;
@@ -86,7 +97,6 @@ class EmpresasConsorciadasStore {
 					ruc: '20534233532',
 					razonSocial: 'CONSTRUCTORA EL ARENAL S.A.C.',
 					nombreComercial: 'El Arenal',
-					porcentajeParticipacion: 60,
 					domicilioFiscal: 'Av. Los Pinos 123, Lima, Lima, Perú',
 					representanteLegal: {
 						dni: '12345678',
@@ -97,15 +107,17 @@ class EmpresasConsorciadasStore {
 						telefono: '987654321',
 						correoElectronico: 'contacto@elarenal.com'
 					},
-					esLider: true,
-					fechaRegistro: '2025-01-15'
+					actividadPrincipal: 'Construcción de edificios completos',
+					registroRNP: 'A123456',
+					vigenciaRNPHasta: '2025-12-31',
+					fechaRegistro: '2025-01-15',
+					activo: true
 				},
 				{
 					id: 2,
 					ruc: '20601234567',
 					razonSocial: 'INGENIEROS ASOCIADOS S.A.',
 					nombreComercial: 'Ingenieros Asociados',
-					porcentajeParticipacion: 40,
 					domicilioFiscal: 'Jr. Las Flores 456, Lima, Lima, Perú',
 					representanteLegal: {
 						dni: '87654321',
@@ -116,15 +128,37 @@ class EmpresasConsorciadasStore {
 						telefono: '912345678',
 						correoElectronico: 'mtorres@ingenierosasociados.com'
 					},
-					esLider: false,
-					fechaRegistro: '2025-01-15'
+					actividadPrincipal: 'Servicios de ingeniería civil',
+					registroRNP: 'B789012',
+					vigenciaRNPHasta: '2026-03-15',
+					fechaRegistro: '2025-01-15',
+					activo: true
+				},
+				{
+					id: 3,
+					ruc: '20445566778',
+					razonSocial: 'CONSULTORÍA TÉCNICA PERU S.R.L.',
+					domicilioFiscal: 'Av. Arequipa 2450, Lima, Lima, Perú',
+					representanteLegal: {
+						dni: '44556677',
+						nombresCompletos: 'Roberto Sánchez Mejía',
+						cargo: 'Gerente General'
+					},
+					contacto: {
+						telefono: '945678901',
+						correoElectronico: 'info@consultecperu.com'
+					},
+					actividadPrincipal: 'Consultoría en proyectos de construcción',
+					registroRNP: 'C345678',
+					vigenciaRNPHasta: '2024-11-30', // Vencido
+					fechaRegistro: '2024-06-10',
+					activo: false
 				}
 			];
 
 			this.state.empresas = empresasSimuladas;
-			this.state.porcentajeTotal = this.calcularPorcentajeTotal();
 		} catch (err) {
-			this.state.error = err instanceof Error ? err.message : 'Error al cargar empresas consorciadas';
+			this.state.error = err instanceof Error ? err.message : 'Error al cargar empresas';
 		} finally {
 			this.state.isLoading = false;
 		}
@@ -146,27 +180,16 @@ class EmpresasConsorciadasStore {
 			}
 
 			// TODO: Reemplazar con tu llamada real a la API
-			// const response = await fetch('/api/empresas-consorciadas', {
-			//   method: 'POST',
-			//   headers: {
-			//     'Authorization': `Bearer ${token}`,
-			//     'Content-Type': 'application/json'
-			//   },
-			//   body: JSON.stringify(data)
-			// });
-
-			// Simulación de guardado
 			await new Promise((resolve) => setTimeout(resolve, 1000));
 
 			const nuevaEmpresa: EmpresaConsorciada = {
-				id: Date.now(), // En producción, esto vendría del backend
+				id: Date.now(),
 				...data,
-				fechaRegistro: new Date().toISOString().split('T')[0]
+				fechaRegistro: new Date().toISOString().split('T')[0],
+				activo: true
 			};
 
 			this.state.empresas = [...this.state.empresas, nuevaEmpresa];
-			this.state.porcentajeTotal = this.calcularPorcentajeTotal();
-
 			return true;
 		} catch (err) {
 			this.state.error = err instanceof Error ? err.message : 'Error al agregar empresa';
@@ -191,25 +214,17 @@ class EmpresasConsorciadasStore {
 				return false;
 			}
 
-			// TODO: Reemplazar con tu llamada real a la API
-			// const response = await fetch(`/api/empresas-consorciadas/${id}`, {
-			//   method: 'PUT',
-			//   headers: {
-			//     'Authorization': `Bearer ${token}`,
-			//     'Content-Type': 'application/json'
-			//   },
-			//   body: JSON.stringify(data)
-			// });
-
-			// Simulación de actualización
 			await new Promise((resolve) => setTimeout(resolve, 1000));
 
 			this.state.empresas = this.state.empresas.map((empresa) =>
 				empresa.id === id
-					? { ...empresa, ...data }
+					? { 
+						...empresa, 
+						...data,
+						fechaActualizacion: new Date().toISOString().split('T')[0]
+					}
 					: empresa
 			);
-			this.state.porcentajeTotal = this.calcularPorcentajeTotal();
 
 			return true;
 		} catch (err) {
@@ -226,17 +241,14 @@ class EmpresasConsorciadasStore {
 		this.state.error = null;
 
 		try {
-			// TODO: Reemplazar con tu llamada real a la API
-			// const response = await fetch(`/api/empresas-consorciadas/${id}`, {
-			//   method: 'DELETE',
-			//   headers: { 'Authorization': `Bearer ${token}` }
-			// });
-
-			// Simulación de eliminación
 			await new Promise((resolve) => setTimeout(resolve, 800));
-
-			this.state.empresas = this.state.empresas.filter((empresa) => empresa.id !== id);
-			this.state.porcentajeTotal = this.calcularPorcentajeTotal();
+			
+			// En lugar de eliminar físicamente, marcar como inactiva
+			this.state.empresas = this.state.empresas.map((empresa) =>
+				empresa.id === id
+					? { ...empresa, activo: false }
+					: empresa
+			);
 
 			return true;
 		} catch (err) {
@@ -247,9 +259,29 @@ class EmpresasConsorciadasStore {
 		}
 	}
 
+	// Activar/Desactivar empresa
+	async toggleEmpresaActiva(id: number): Promise<boolean> {
+		try {
+			this.state.empresas = this.state.empresas.map((empresa) =>
+				empresa.id === id
+					? { ...empresa, activo: !empresa.activo }
+					: empresa
+			);
+			return true;
+		} catch (err) {
+			this.state.error = err instanceof Error ? err.message : 'Error al cambiar estado de empresa';
+			return false;
+		}
+	}
+
 	// Seleccionar empresa para edición
 	seleccionarEmpresa(empresa: EmpresaConsorciada | null) {
 		this.state.empresaSeleccionada = empresa;
+	}
+
+	// Buscar empresa por RUC
+	buscarPorRUC(ruc: string): EmpresaConsorciada | undefined {
+		return this.state.empresas.find(e => e.ruc === ruc);
 	}
 
 	// Validaciones
@@ -261,14 +293,17 @@ class EmpresasConsorciadasStore {
 			errors['ruc'] = 'El RUC debe tener 11 dígitos';
 		}
 
+		// Verificar RUC duplicado
+		const empresaExistente = this.state.empresas.find(
+			e => e.ruc === data.ruc && e.id !== this.state.empresaSeleccionada?.id
+		);
+		if (empresaExistente) {
+			errors['ruc'] = 'Ya existe una empresa con este RUC';
+		}
+
 		// Validar Razón Social
 		if (!data.razonSocial || data.razonSocial.trim() === '') {
 			errors['razonSocial'] = 'La razón social es obligatoria';
-		}
-
-		// Validar Porcentaje
-		if (data.porcentajeParticipacion <= 0 || data.porcentajeParticipacion > 100) {
-			errors['porcentajeParticipacion'] = 'El porcentaje debe estar entre 1 y 100';
 		}
 
 		// Validar Domicilio Fiscal
@@ -299,6 +334,14 @@ class EmpresasConsorciadasStore {
 		// Validar Correo
 		if (!data.contacto.correoElectronico || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.contacto.correoElectronico)) {
 			errors['contacto.correoElectronico'] = 'El correo electrónico no es válido';
+		}
+
+		// Validar fecha de vigencia RNP si existe
+		if (data.vigenciaRNPHasta) {
+			const fechaVigencia = new Date(data.vigenciaRNPHasta);
+			if (isNaN(fechaVigencia.getTime())) {
+				errors['vigenciaRNPHasta'] = 'La fecha de vigencia no es válida';
+			}
 		}
 
 		return errors;

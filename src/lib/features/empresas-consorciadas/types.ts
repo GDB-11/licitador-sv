@@ -5,7 +5,6 @@ export interface EmpresaConsorciada {
 	ruc: string;
 	razonSocial: string;
 	nombreComercial?: string;
-	porcentajeParticipacion: number;
 	domicilioFiscal: string;
 	representanteLegal: {
 		dni: string;
@@ -16,15 +15,19 @@ export interface EmpresaConsorciada {
 		telefono: string;
 		correoElectronico: string;
 	};
-	esLider: boolean;
+	// Datos adicionales útiles
+	actividadPrincipal?: string;
+	registroRNP?: string; // Registro Nacional de Proveedores
+	vigenciaRNPHasta?: string;
 	fechaRegistro: string;
+	fechaActualizacion?: string;
+	activo: boolean;
 }
 
 export interface EmpresaConsorciadaFormData {
 	ruc: string;
 	razonSocial: string;
 	nombreComercial?: string;
-	porcentajeParticipacion: number;
 	domicilioFiscal: string;
 	representanteLegal: {
 		dni: string;
@@ -35,7 +38,10 @@ export interface EmpresaConsorciadaFormData {
 		telefono: string;
 		correoElectronico: string;
 	};
-	esLider: boolean;
+	actividadPrincipal?: string;
+	registroRNP?: string;
+	vigenciaRNPHasta?: string;
+	activo: boolean;
 }
 
 export interface ValidationErrors {
@@ -49,12 +55,12 @@ export interface EmpresasConsorciadasState {
 	isSaving: boolean;
 	error: string | null;
 	validationErrors: ValidationErrors;
-	porcentajeTotal: number;
+	filtroActivas: boolean;
 }
 
-export interface ConsorcioResumen {
+export interface EmpresasResumen {
 	totalEmpresas: number;
-	porcentajeTotal: number;
-	empresaLider: EmpresaConsorciada | null;
-	esValido: boolean;
+	empresasActivas: number;
+	empresasInactivas: number;
+	empresasConRNPVigente: number;
 }
