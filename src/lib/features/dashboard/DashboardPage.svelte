@@ -25,8 +25,7 @@
 	}
 
 	function handleIniciarProceso() {
-		console.log('Iniciar proceso completo de licitación');
-		// TODO: Navegar al wizard de generación de documentos
+		goto('/anexos');
 	}
 
 	function handleGenerarAnexo1() {
