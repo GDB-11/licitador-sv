@@ -35,8 +35,8 @@
 
 		if (!password) {
 			newErrors.password = 'La contraseña es requerida';
-		} else if (password.length < 6) {
-			newErrors.password = 'La contraseña debe tener al menos 6 caracteres';
+		} else if (password.length < 5) {
+			newErrors.password = 'La contraseña debe tener al menos 5 caracteres';
 		}
 
 		errors = newErrors;
