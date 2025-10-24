@@ -24,10 +24,17 @@
 		onRemove
 	}: FileUploadProps = $props();
 
-	let fileInput: HTMLInputElement;
+	let fileInput = $state<HTMLInputElement>();
 	let isDragging = $state(false);
 	let isUploading = $state(false);
 	let uploadError = $state<string | undefined>();
+
+	// Helper para detectar si es Base64
+	const isBase64Image = $derived(
+		currentFile && 
+		(currentFile.startsWith('data:image/') || 
+		 (currentFile.length > 100 && !currentFile.startsWith('http')))
+	);
 
 	async function handleFileSelect(event: Event) {
 		const target = event.target as HTMLInputElement;
@@ -86,7 +93,7 @@
 </script>
 
 <div class="w-full">
-	<label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+	<label for="file-upload-{label}" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
 		{label}
 		{#if required}
 			<span class="text-red-600 dark:text-red-400">*</span>
@@ -96,56 +103,72 @@
 	{#if currentFile}
 		<!-- Vista previa del archivo -->
 		<div
-			class="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg border-2 border-gray-300 dark:border-gray-600"
+			class="flex flex-col space-y-3 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg border-2 border-gray-300 dark:border-gray-600"
 		>
-			<div class="flex items-center space-x-3">
-				<svg
-					xmlns="http://www.w3.org/2000/svg"
-					fill="none"
-					viewBox="0 0 24 24"
-					stroke-width="2"
-					stroke="currentColor"
-					class="w-8 h-8 text-green-600 dark:text-green-400"
-				>
-					<path
-						stroke-linecap="round"
-						stroke-linejoin="round"
-						d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+			<!-- Vista previa de imagen si es Base64 o URL de imagen -->
+			{#if isBase64Image || (currentFile && (currentFile.endsWith('.jpg') || currentFile.endsWith('.jpeg') || currentFile.endsWith('.png') || currentFile.endsWith('.gif')))}
+				<div class="flex justify-center">
+					<img
+						src={isBase64Image ? `data:image/png;base64,${currentFile}` : currentFile}
+						alt="Vista previa del DNI"
+						class="max-w-full h-auto max-h-64 rounded-lg border border-gray-300 dark:border-gray-600"
 					/>
-				</svg>
-				<div>
-					<p class="text-sm font-medium text-gray-900 dark:text-white">Archivo subido</p>
-					<a
-						href={currentFile}
-						target="_blank"
-						rel="noopener noreferrer"
-						class="text-xs text-indigo-600 dark:text-indigo-400 hover:underline"
-					>
-						Ver archivo
-					</a>
 				</div>
-			</div>
-			<button
-				type="button"
-				onclick={handleRemove}
-				class="p-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
-				{disabled}
-			>
-				<svg
-					xmlns="http://www.w3.org/2000/svg"
-					fill="none"
-					viewBox="0 0 24 24"
-					stroke-width="2"
-					stroke="currentColor"
-					class="w-5 h-5"
+			{/if}
+
+			<div class="flex items-center justify-between">
+				<div class="flex items-center space-x-3">
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						fill="none"
+						viewBox="0 0 24 24"
+						stroke-width="2"
+						stroke="currentColor"
+						class="w-8 h-8 text-green-600 dark:text-green-400"
+					>
+						<path
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+						/>
+					</svg>
+					<div>
+						<p class="text-sm font-medium text-gray-900 dark:text-white">Archivo cargado</p>
+						{#if !isBase64Image}
+							<a
+								href={currentFile}
+								target="_blank"
+								rel="noopener noreferrer"
+								class="text-xs text-indigo-600 dark:text-indigo-400 hover:underline"
+							>
+								Ver archivo
+							</a>
+						{/if}
+					</div>
+				</div>
+				<button
+					type="button"
+					onclick={handleRemove}
+					class="p-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
+					{disabled}
+					aria-label="Eliminar archivo"
 				>
-					<path
-						stroke-linecap="round"
-						stroke-linejoin="round"
-						d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
-					/>
-				</svg>
-			</button>
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						fill="none"
+						viewBox="0 0 24 24"
+						stroke-width="2"
+						stroke="currentColor"
+						class="w-5 h-5"
+					>
+						<path
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
+						/>
+					</svg>
+				</button>
+			</div>
 		</div>
 	{:else}
 		<!-- Zona de carga -->
@@ -158,9 +181,12 @@
 			ondragover={handleDragOver}
 			ondragleave={handleDragLeave}
 			ondrop={handleDrop}
+			role="button"
+			tabindex="0"
 		>
 			<input
 				type="file"
+				id="file-upload-{label}"
 				bind:this={fileInput}
 				{accept}
 				{disabled}

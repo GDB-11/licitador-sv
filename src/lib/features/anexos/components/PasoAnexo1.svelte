@@ -13,13 +13,13 @@
 	let { onGuardar, onRegresar, tipoParticipacion, datosIniciales = null, empresasDisponibles }: Props = $props();
 
 	// Datos para participación individual
-	let razonSocial = $state(datosIniciales?.razonSocial || 'CONSTRUCTORA EL ARENAL S.A.C.');
+	let razonSocial = $state(datosIniciales?.razonSocial || '');
 	let ruc = $state(datosIniciales?.ruc || '20534233532');
-	let domicilioLegal = $state(datosIniciales?.domicilioLegal || 'Av. Los Constructores 123, Lima');
-	let telefono = $state(datosIniciales?.telefono || '01-2345678');
-	let correoElectronico = $state(datosIniciales?.correoElectronico || 'contacto@constructoraelarenalsac.pe');
-	let representanteLegal = $state(datosIniciales?.representanteLegal || 'Juan Pérez García');
-	let dniRepresentante = $state(datosIniciales?.dniRepresentante || '12345678');
+	let domicilioLegal = $state(datosIniciales?.domicilioLegal || '');
+	let telefono = $state(datosIniciales?.telefono || '');
+	let correoElectronico = $state(datosIniciales?.correoElectronico || '');
+	let representanteLegal = $state(datosIniciales?.representanteLegal || '');
+	let dniRepresentante = $state(datosIniciales?.dniRepresentante || '');
 
 	// Datos para consorcio
 	let nombreConsorcio = $state(datosIniciales?.nombreConsorcio || '');

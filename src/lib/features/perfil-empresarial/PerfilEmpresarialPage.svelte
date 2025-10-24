@@ -386,7 +386,45 @@
 		</div>
 	{:else}
 		<div class="text-center py-12">
-			<p class="text-gray-600 dark:text-gray-400">No se pudo cargar el perfil empresarial</p>
+			<div class="bg-white dark:bg-gray-800 rounded-xl p-8 border border-gray-200 dark:border-gray-700 max-w-md mx-auto">
+				<svg
+					xmlns="http://www.w3.org/2000/svg"
+					fill="none"
+					viewBox="0 0 24 24"
+					stroke-width="1.5"
+					stroke="currentColor"
+					class="w-16 h-16 mx-auto text-gray-400 dark:text-gray-500 mb-4"
+				>
+					<path
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z"
+					/>
+				</svg>
+				<h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+					No se pudo cargar el perfil empresarial
+				</h3>
+				{#if perfilEmpresarialStore.error}
+					<p class="text-sm text-gray-600 dark:text-gray-400 mb-4">
+						{perfilEmpresarialStore.error}
+					</p>
+				{/if}
+				<div class="flex flex-col sm:flex-row gap-3 justify-center">
+					<Button
+						type="button"
+						variant="primary"
+						onclick={() => perfilEmpresarialStore.fetchPerfil()}
+					>
+						Reintentar
+					</Button>
+					<Button
+						type="button"
+						onclick={() => goto('/dashboard')}
+					>
+						Volver al Dashboard
+					</Button>
+				</div>
+			</div>
 		</div>
 	{/if}
 </div>

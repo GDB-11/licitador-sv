@@ -17,7 +17,9 @@ export const API_ENDPOINTS = {
 		logout: '/api/auth/logout'
 	},
 	company: {
-		myCompany: '/api/Company/my-company'
+		myCompany: '/api/Company/my-company',
+		myCompanyDetails: (companyId: string) => `/api/Company/my-company-details/${companyId}`,
+		updateCompanyDetails: '/api/Company/update-company-details'
 	},
 	perfil: {
 		empresarial: '/api/perfil-empresarial',

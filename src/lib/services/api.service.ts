@@ -1,6 +1,7 @@
 // src/lib/services/api.service.ts
 
 import { API_BASE_URL, API_ENDPOINTS, API_TIMEOUT, STORAGE_KEYS } from '$lib/config/api.config';
+import { goto } from '$app/navigation';
 
 interface RequestConfig extends RequestInit {
 	timeout?: number;
@@ -122,14 +123,14 @@ class ApiService {
 			}
 
 			// Refrescar el token
-			const response = await this.post<{ accessToken: string; refreshToken: string }>(
+			const response = await this.post<{ accessToken: string; refreshToken: string; expiresAt: string }>(
 				API_ENDPOINTS.auth.refresh,
 				{ refreshToken },
 				{ skipAuth: true }
 			);
 
 			// Guardar los nuevos tokens
-			this.setTokens(response.accessToken, response.refreshToken);
+			this.setTokens(response.accessToken, response.refreshToken, new Date(response.expiresAt));
 
 			// Notificar a todos los suscriptores
 			this.refreshSubscribers.forEach((callback) => callback(response.accessToken));
@@ -138,9 +139,16 @@ class ApiService {
 			// Reintentar la petición original
 			return await this.request<T>(endpoint, config);
 		} catch (error) {
-			// Si falla el refresh, limpiar tokens y lanzar error
+			// Si falla el refresh, limpiar tokens y redirigir a login
 			this.clearTokens();
-			throw error;
+			
+			// Redirigir al login solo si estamos en el navegador
+			if (typeof window !== 'undefined') {
+				console.error('Sesión expirada. Redirigiendo al login...');
+				goto('/login');
+			}
+			
+			throw new Error('Sesión expirada. Por favor, inicie sesión nuevamente.');
 		} finally {
 			this.isRefreshing = false;
 		}
