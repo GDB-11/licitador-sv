@@ -1,5 +1,6 @@
 // src/lib/features/dashboard/stores/dashboard.svelte.ts
 import { writable } from 'svelte/store';
+import { authStore } from '$lib/features/auth/stores/auth.svelte';
 
 // Tipos
 export interface Estadisticas {
@@ -50,6 +51,19 @@ class DashboardStore {
 
 	get perfilIncompleto() {
 		return this.data.estadisticas ? this.data.estadisticas.perfilCompleto < 100 : false;
+	}
+
+	// Getters para información del usuario y empresa desde authStore
+	get userName() {
+		return authStore.user?.name || 'Usuario';
+	}
+
+	get companyName() {
+		return authStore.company?.razonSocial || 'Mi Empresa';
+	}
+
+	get companyRuc() {
+		return authStore.company?.ruc || '';
 	}
 
 	// Simular carga de estadísticas (aquí irá tu API call)
@@ -119,6 +133,11 @@ class DashboardStore {
 
 	// Cargar todos los datos del dashboard
 	async loadDashboardData() {
+		// Primero cargar la información de la empresa si no está disponible
+		if (!authStore.company) {
+			await authStore.fetchCompany();
+		}
+		
 		await Promise.all([this.fetchEstadisticas(), this.fetchDocumentosRecientes()]);
 	}
 

@@ -1,7 +1,6 @@
 <!-- src/lib/features/dashboard/components/DashboardHeader.svelte -->
 <script lang="ts">
-	import Link from '$lib/components/ui/Link.svelte';
-import { ThemeToggle } from '$lib/features/theme';
+	import { ThemeToggle } from '$lib/features/theme';
 
 	interface DashboardHeaderProps {
 		nombreEmpresa?: string;
@@ -11,8 +10,8 @@ import { ThemeToggle } from '$lib/features/theme';
 	}
 
 	let {
-		nombreEmpresa = 'Constructora el Arenal S.A.C.',
-		nombreUsuario = 'Admin',
+		nombreEmpresa,
+		nombreUsuario,
 		onSettings,
 		onLogout
 	}: DashboardHeaderProps = $props();

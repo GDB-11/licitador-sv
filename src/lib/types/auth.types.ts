@@ -32,8 +32,15 @@ export interface User {
 	name: string;
 }
 
+export interface Company {
+	companyId: string;
+	ruc: string;
+	razonSocial: string;
+}
+
 export interface AuthState {
 	user: User | null;
+	company: Company | null;
 	isAuthenticated: boolean;
 	isLoading: boolean;
 	error: string | null;

@@ -6,7 +6,7 @@
  */
 
 // Base URL del backend - cambiar según el entorno
-export const API_BASE_URL = 'http://localhost:5182';
+export const API_BASE_URL = 'https://localhost:7102';
 //export const API_BASE_URL = 'http://localhost:5182';//import.meta.env.VITE_API_BASE_URL || 'http://localhost:5182';
 
 // Endpoints de la API
@@ -15,6 +15,9 @@ export const API_ENDPOINTS = {
 		login: '/api/auth/login',
 		refresh: '/api/auth/refresh',
 		logout: '/api/auth/logout'
+	},
+	company: {
+		myCompany: '/api/Company/my-company'
 	},
 	perfil: {
 		empresarial: '/api/perfil-empresarial',

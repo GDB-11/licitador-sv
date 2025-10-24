@@ -2,11 +2,12 @@
 
 import { apiService } from '$lib/services/api.service';
 import { API_ENDPOINTS } from '$lib/config/api.config';
-import type { AuthState, User, LoginResponse } from '$lib/types/auth.types';
+import type { AuthState, User, LoginResponse, Company } from '$lib/types/auth.types';
 
 class AuthStore {
 	private state = $state<AuthState>({
 		user: null,
+		company: null,
 		isAuthenticated: false,
 		isLoading: false,
 		error: null
@@ -21,6 +22,10 @@ class AuthStore {
 
 	get user() {
 		return this.state.user;
+	}
+
+	get company() {
+		return this.state.company;
 	}
 
 	get isAuthenticated() {
@@ -120,6 +125,27 @@ class AuthStore {
 	}
 
 	/**
+	 * Obtiene la información de la empresa del usuario
+	 */
+	async fetchCompany(): Promise<boolean> {
+		try {
+			const response = await apiService.get<Company>(API_ENDPOINTS.company.myCompany);
+			
+			this.state.company = {
+				companyId: response.companyId,
+				ruc: response.ruc,
+				razonSocial: response.razonSocial
+			};
+
+			return true;
+		} catch (error) {
+			console.error('Error al obtener información de la empresa:', error);
+			this.state.company = null;
+			return false;
+		}
+	}
+
+	/**
 	 * Cierra sesión
 	 */
 	async logout() {
@@ -134,6 +160,7 @@ class AuthStore {
 		} finally {
 			// Siempre limpiar el estado local
 			this.state.user = null;
+			this.state.company = null;
 			this.state.isAuthenticated = false;
 			this.state.error = null;
 			apiService.clearTokens();

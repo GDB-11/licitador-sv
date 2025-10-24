@@ -2,6 +2,9 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
 	import DashboardHeader from '$lib/features/dashboard/components/DashboardHeader.svelte';
+	import { dashboardStore } from '$lib/features/dashboard/stores/dashboard.svelte';
+	import { authStore } from '$lib/features/auth/stores/auth.svelte';
+	import { goto } from '$app/navigation';
 
 	interface ProtectedLayoutProps {
 		children: Snippet;
@@ -14,15 +17,20 @@
 		// TODO: Implementar navegación a configuración
 	}
 
-	function handleLogout() {
-		console.log('Cerrar sesión');
-		// TODO: Implementar logout
+	async function handleLogout() {
+		await authStore.logout();
+		goto('/login');
 	}
 </script>
 
 <div class="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col">
 	<!-- Header del dashboard -->
-	<DashboardHeader onSettings={handleSettings} onLogout={handleLogout} />
+	<DashboardHeader 
+		nombreEmpresa={dashboardStore.companyName}
+		nombreUsuario={dashboardStore.userName}
+		onSettings={handleSettings} 
+		onLogout={handleLogout} 
+	/>
 
 	<!-- Contenido principal -->
 	<main class="flex-1">
