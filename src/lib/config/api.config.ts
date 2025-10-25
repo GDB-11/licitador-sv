@@ -6,8 +6,7 @@
  */
 
 // Base URL del backend - cambiar según el entorno
-export const API_BASE_URL = 'https://localhost:7102';
-//export const API_BASE_URL = 'http://localhost:5182';//import.meta.env.VITE_API_BASE_URL || 'http://localhost:5182';
+export const API_BASE_URL: string = getEnvVariable("VITE_API_BASE_URL");
 
 // Endpoints de la API
 export const API_ENDPOINTS = {
@@ -46,3 +45,11 @@ export const STORAGE_KEYS = {
 	refreshToken: 'refresh_token',
 	tokenExpiry: 'token_expiry'
 } as const;
+
+function getEnvVariable(name: string): string {
+	const value = import.meta.env[name];
+	if (!value) {
+		throw new Error(`${name} is not defined in the environment variables.`);
+	}
+	return value;
+}
