@@ -33,6 +33,11 @@ export const API_ENDPOINTS = {
 		generar: '/api/documentos/generar',
 		listar: '/api/documentos',
 		descargar: (id: string) => `/api/documentos/${id}/descargar`
+	},
+	document: {
+		generateAnnexes: '/api/Document/generate-annexes',
+		recent: '/api/Document/recent',
+		delete: (id: string) => `/api/Document/${id}`
 	}
 } as const;
 

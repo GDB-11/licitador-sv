@@ -158,13 +158,13 @@
 						type="text"
 						id="razonSocial"
 						bind:value={razonSocial}
-						class="w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-800 
-							border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white
-							focus:ring-2 focus:ring-blue-500 {errores.razonSocial ? 'border-red-500' : ''}"
+						readonly
+						class="w-full px-4 py-2 border rounded-lg bg-gray-100 dark:bg-gray-900 
+							border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-400
+							cursor-not-allowed"
+						title="Este campo se completa automáticamente desde su perfil empresarial"
 					/>
-					{#if errores.razonSocial}
-						<p class="mt-1 text-sm text-red-500">{errores.razonSocial}</p>
-					{/if}
+					<p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Desde perfil empresarial</p>
 				</div>
 
 				<div>
@@ -175,14 +175,14 @@
 						type="text"
 						id="ruc"
 						bind:value={ruc}
+						readonly
 						maxlength="11"
-						class="w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-800 
-							border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white
-							focus:ring-2 focus:ring-blue-500 {errores.ruc ? 'border-red-500' : ''}"
+						class="w-full px-4 py-2 border rounded-lg bg-gray-100 dark:bg-gray-900 
+							border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-400
+							cursor-not-allowed"
+						title="Este campo se completa automáticamente desde su perfil empresarial"
 					/>
-					{#if errores.ruc}
-						<p class="mt-1 text-sm text-red-500">{errores.ruc}</p>
-					{/if}
+					<p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Desde perfil empresarial</p>
 				</div>
 
 				<div>
@@ -193,13 +193,13 @@
 						type="tel"
 						id="telefono"
 						bind:value={telefono}
-						class="w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-800 
-							border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white
-							focus:ring-2 focus:ring-blue-500 {errores.telefono ? 'border-red-500' : ''}"
+						readonly
+						class="w-full px-4 py-2 border rounded-lg bg-gray-100 dark:bg-gray-900 
+							border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-400
+							cursor-not-allowed"
+						title="Este campo se completa automáticamente desde su perfil empresarial"
 					/>
-					{#if errores.telefono}
-						<p class="mt-1 text-sm text-red-500">{errores.telefono}</p>
-					{/if}
+					<p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Desde perfil empresarial</p>
 				</div>
 
 				<div class="md:col-span-2">
@@ -210,13 +210,13 @@
 						type="text"
 						id="domicilio"
 						bind:value={domicilioLegal}
-						class="w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-800 
-							border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white
-							focus:ring-2 focus:ring-blue-500 {errores.domicilioLegal ? 'border-red-500' : ''}"
+						readonly
+						class="w-full px-4 py-2 border rounded-lg bg-gray-100 dark:bg-gray-900 
+							border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-400
+							cursor-not-allowed"
+						title="Este campo se completa automáticamente desde su perfil empresarial"
 					/>
-					{#if errores.domicilioLegal}
-						<p class="mt-1 text-sm text-red-500">{errores.domicilioLegal}</p>
-					{/if}
+					<p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Desde perfil empresarial</p>
 				</div>
 
 				<div class="md:col-span-2">
@@ -227,13 +227,13 @@
 						type="email"
 						id="correo"
 						bind:value={correoElectronico}
-						class="w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-800 
-							border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white
-							focus:ring-2 focus:ring-blue-500 {errores.correoElectronico ? 'border-red-500' : ''}"
+						readonly
+						class="w-full px-4 py-2 border rounded-lg bg-gray-100 dark:bg-gray-900 
+							border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-400
+							cursor-not-allowed"
+						title="Este campo se completa automáticamente desde su perfil empresarial"
 					/>
-					{#if errores.correoElectronico}
-						<p class="mt-1 text-sm text-red-500">{errores.correoElectronico}</p>
-					{/if}
+					<p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Desde perfil empresarial</p>
 				</div>
 
 				<div>
@@ -244,13 +244,13 @@
 						type="text"
 						id="representante"
 						bind:value={representanteLegal}
-						class="w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-800 
-							border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white
-							focus:ring-2 focus:ring-blue-500 {errores.representanteLegal ? 'border-red-500' : ''}"
+						readonly
+						class="w-full px-4 py-2 border rounded-lg bg-gray-100 dark:bg-gray-900 
+							border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-400
+							cursor-not-allowed"
+						title="Este campo se completa automáticamente desde su perfil empresarial"
 					/>
-					{#if errores.representanteLegal}
-						<p class="mt-1 text-sm text-red-500">{errores.representanteLegal}</p>
-					{/if}
+					<p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Desde perfil empresarial</p>
 				</div>
 
 				<div>
@@ -261,14 +261,14 @@
 						type="text"
 						id="dni"
 						bind:value={dniRepresentante}
+						readonly
 						maxlength="8"
-						class="w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-800 
-							border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white
-							focus:ring-2 focus:ring-blue-500 {errores.dniRepresentante ? 'border-red-500' : ''}"
+						class="w-full px-4 py-2 border rounded-lg bg-gray-100 dark:bg-gray-900 
+							border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-400
+							cursor-not-allowed"
+						title="Este campo se completa automáticamente desde su perfil empresarial"
 					/>
-					{#if errores.dniRepresentante}
-						<p class="mt-1 text-sm text-red-500">{errores.dniRepresentante}</p>
-					{/if}
+					<p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Desde perfil empresarial</p>
 				</div>
 			</div>
 		{:else}
