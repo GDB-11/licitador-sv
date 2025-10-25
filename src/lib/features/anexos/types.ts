@@ -9,6 +9,7 @@ export interface ConfiguracionAnexos {
 	numeroProceso: string;
 	entidad: string;
 	objeto: string;
+	ciudad: string;
 }
 
 // Datos del consorcio

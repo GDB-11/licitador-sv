@@ -90,6 +90,10 @@
 					<span class="block text-gray-600 dark:text-gray-400 mb-1">Número de Proceso</span>
 					<p class="font-semibold text-gray-900 dark:text-white break-all">{configuracion.numeroProceso}</p>
 				</div>
+				<div class="bg-white dark:bg-gray-800/50 rounded-lg p-3 shadow-sm">
+					<span class="block text-gray-600 dark:text-gray-400 mb-1">Ciudad</span>
+					<p class="font-semibold text-gray-900 dark:text-white">{configuracion.ciudad}</p>
+				</div>
 				<div class="bg-white dark:bg-gray-800/50 rounded-lg p-3 shadow-sm sm:col-span-2">
 					<span class="block text-gray-600 dark:text-gray-400 mb-1">Entidad</span>
 					<p class="font-semibold text-gray-900 dark:text-white">{configuracion.entidad}</p>
