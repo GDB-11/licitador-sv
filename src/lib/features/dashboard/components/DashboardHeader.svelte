@@ -41,7 +41,7 @@
 					</svg>
 				</div>
 				<div>
-					<h1 class="text-xl font-bold text-gray-900 dark:text-white">Licitador</h1>
+					<h1 class="text-xl font-bold text-gray-900 dark:text-white">DocsPúblicos</h1>
 					<p class="text-xs text-gray-500 dark:text-gray-400">{nombreEmpresa}</p>
 				</div>
 			</a>

@@ -98,7 +98,7 @@
 				/>
 			</svg>
 		</div>
-		<h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">Licitador</h1>
+		<h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">DocsPúblicos</h1>
 		<p class="text-gray-600 dark:text-gray-400">Sistema de apoyo para Contrataciones Públicas</p>
 	</div>
 

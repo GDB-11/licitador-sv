@@ -37,7 +37,7 @@
 					</svg>
 				</div>
 				<span class="text-xl font-bold text-gray-900 dark:text-white hidden sm:block">
-					Licitador
+					DocsPúblicos
 				</span>
 			</a>
 
@@ -69,7 +69,7 @@
 	<!-- Footer público -->
 	<footer class="p-4 flex-shrink-0">
 		<div class="container mx-auto text-center text-sm text-gray-600 dark:text-gray-400">
-			<p>© {data.year} Licitador - Sistema de Contrataciones Públicas - Ley N° 32069</p>
+			<p>© {data.year} DocsPúblicos - Sistema de Contrataciones Públicas - Ley N° 32069</p>
 		</div>
 	</footer>
 </div>
