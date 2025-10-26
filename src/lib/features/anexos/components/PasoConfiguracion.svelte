@@ -13,6 +13,7 @@
 	let numeroProceso = $state(datosIniciales?.numeroProceso || '');
 	let entidad = $state(datosIniciales?.entidad || '');
 	let objeto = $state(datosIniciales?.objeto || '');
+	let ciudad = $state(datosIniciales?.ciudad || '');
 
 	let errores = $state<Record<string, string>>({});
 
@@ -31,6 +32,10 @@
 			nuevosErrores.objeto = 'El objeto de la contratación es obligatorio';
 		}
 
+		if (!ciudad.trim()) {
+			nuevosErrores.ciudad = 'La ciudad es obligatoria';
+		}
+
 		errores = nuevosErrores;
 		return Object.keys(nuevosErrores).length === 0;
 	}
@@ -46,7 +51,8 @@
 			tipoParticipacion,
 			numeroProceso,
 			entidad,
-			objeto
+			objeto,
+			ciudad
 		});
 	}
 </script>
@@ -191,6 +197,28 @@
 			></textarea>
 			{#if errores.objeto}
 				<p class="mt-1 text-sm text-red-500">{errores.objeto}</p>
+			{/if}
+		</div>
+
+		<!-- Ciudad -->
+		<div>
+			<label for="ciudad" class="block text-sm font-medium text-gray-900 dark:text-white mb-2">
+				Ciudad donde se participa <span class="text-red-500">*</span>
+			</label>
+			<input
+				type="text"
+				id="ciudad"
+				bind:value={ciudad}
+				placeholder="Ej: Lima, San Salvador, La Unión"
+				class="w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-800 
+					border-gray-300 dark:border-gray-700 
+					text-gray-900 dark:text-white
+					placeholder-gray-500 dark:placeholder-gray-400
+					focus:ring-2 focus:ring-blue-500 focus:border-transparent
+					{errores.ciudad ? 'border-red-500' : ''}"
+			/>
+			{#if errores.ciudad}
+				<p class="mt-1 text-sm text-red-500">{errores.ciudad}</p>
 			{/if}
 		</div>
 

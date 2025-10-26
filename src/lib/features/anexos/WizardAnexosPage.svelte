@@ -21,8 +21,11 @@
 	let empresasDisponibles = $state<EmpresaConsorcio[]>([]);
 
 	onMount(async () => {
-		// Cargar empresas disponibles para consorcio
-		empresasDisponibles = await wizardAnexosStore.obtenerEmpresasConsorcio();
+		// Load company data for auto-population
+		await wizardAnexosStore.fetchCompanyData();
+		
+		// Cargar empresas disponibles para consorcio (if needed in the future)
+		// empresasDisponibles = await wizardAnexosStore.obtenerEmpresasConsorcio();
 	});
 
 	function handleGuardarConfiguracion(config: ConfiguracionAnexos) {

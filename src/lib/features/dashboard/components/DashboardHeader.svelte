@@ -1,20 +1,56 @@
 <!-- src/lib/features/dashboard/components/DashboardHeader.svelte -->
 <script lang="ts">
 	import { ThemeToggle } from '$lib/features/theme';
+	import { authStore } from '$lib/features/auth/stores/auth.svelte';
+	import { goto } from '$app/navigation';
 
 	interface DashboardHeaderProps {
 		nombreEmpresa?: string;
 		nombreUsuario?: string;
 		onSettings?: () => void;
-		onLogout?: () => void;
 	}
 
 	let {
 		nombreEmpresa,
 		nombreUsuario,
-		onSettings,
-		onLogout
+		onSettings
 	}: DashboardHeaderProps = $props();
+
+	let isDropdownOpen = $state(false);
+
+	// Toggle dropdown
+	function toggleDropdown() {
+		isDropdownOpen = !isDropdownOpen;
+	}
+
+	// Close dropdown when clicking outside
+	function handleClickOutside(event: MouseEvent) {
+		const target = event.target as HTMLElement;
+		if (!target.closest('[data-dropdown-container]')) {
+			isDropdownOpen = false;
+		}
+	}
+
+	// Handle logout
+	async function handleLogout() {
+		await authStore.logout();
+		goto('/login');
+	}
+
+	// Navigate to profile
+	function handleProfile() {
+		isDropdownOpen = false;
+		goto('/perfil-empresarial');
+	}
+
+	$effect(() => {
+		if (isDropdownOpen) {
+			document.addEventListener('click', handleClickOutside);
+			return () => {
+				document.removeEventListener('click', handleClickOutside);
+			};
+		}
+	});
 </script>
 
 <header class="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
@@ -78,32 +114,114 @@
 					</button>
 				{/if}
 
-				<button
-					class="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-					title="Perfil de usuario"
-				>
-					<div
-						class="w-8 h-8 bg-indigo-100 dark:bg-indigo-900 rounded-full flex items-center justify-center"
+				<!-- User Profile Dropdown -->
+				<div class="relative" data-dropdown-container>
+					<button
+						onclick={toggleDropdown}
+						class="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+						title="Perfil de usuario"
+						aria-expanded={isDropdownOpen}
+						aria-haspopup="true"
 					>
+						<div
+							class="w-8 h-8 bg-indigo-100 dark:bg-indigo-900 rounded-full flex items-center justify-center"
+						>
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								fill="none"
+								viewBox="0 0 24 24"
+								stroke-width="2"
+								stroke="currentColor"
+								class="w-5 h-5 text-indigo-600 dark:text-indigo-400"
+							>
+								<path
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"
+								/>
+							</svg>
+						</div>
+						<span class="text-sm font-medium text-gray-700 dark:text-gray-300 hidden sm:block">
+							{nombreUsuario}
+						</span>
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
 							fill="none"
 							viewBox="0 0 24 24"
 							stroke-width="2"
 							stroke="currentColor"
-							class="w-5 h-5 text-indigo-600 dark:text-indigo-400"
+							class="w-4 h-4 text-gray-500 dark:text-gray-400 transition-transform {isDropdownOpen
+								? 'rotate-180'
+								: ''}"
 						>
-							<path
-								stroke-linecap="round"
-								stroke-linejoin="round"
-								d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"
-							/>
+							<path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
 						</svg>
-					</div>
-					<span class="text-sm font-medium text-gray-700 dark:text-gray-300 hidden sm:block">
-						{nombreUsuario}
-					</span>
-				</button>
+					</button>
+
+					<!-- Dropdown Menu -->
+					{#if isDropdownOpen}
+						<div
+							class="absolute right-0 mt-2 w-56 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-1 z-50 animate-fade-in"
+						>
+							<!-- User Info Section -->
+							<div class="px-4 py-3 border-b border-gray-200 dark:border-gray-700">
+								<p class="text-sm font-medium text-gray-900 dark:text-white">
+									{nombreUsuario}
+								</p>
+								{#if nombreEmpresa}
+									<p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+										{nombreEmpresa}
+									</p>
+								{/if}
+							</div>
+
+							<!-- Menu Items -->
+							<div class="py-1">
+								<button
+									onclick={handleProfile}
+									class="w-full flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+								>
+									<svg
+										xmlns="http://www.w3.org/2000/svg"
+										fill="none"
+										viewBox="0 0 24 24"
+										stroke-width="2"
+										stroke="currentColor"
+										class="w-4 h-4 mr-3"
+									>
+										<path
+											stroke-linecap="round"
+											stroke-linejoin="round"
+											d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z"
+										/>
+									</svg>
+									Ver Perfil
+								</button>
+
+								<button
+									onclick={handleLogout}
+									class="w-full flex items-center px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+								>
+									<svg
+										xmlns="http://www.w3.org/2000/svg"
+										fill="none"
+										viewBox="0 0 24 24"
+										stroke-width="2"
+										stroke="currentColor"
+										class="w-4 h-4 mr-3"
+									>
+										<path
+											stroke-linecap="round"
+											stroke-linejoin="round"
+											d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9"
+										/>
+									</svg>
+									Cerrar Sesión
+								</button>
+							</div>
+						</div>
+					{/if}
+				</div>
 			</div>
 		</div>
 	</div>
