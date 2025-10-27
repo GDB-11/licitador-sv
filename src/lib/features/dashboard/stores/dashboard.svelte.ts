@@ -55,15 +55,15 @@ class DashboardStore {
 
 	// Getters para información del usuario y empresa desde authStore
 	get userName() {
-		return authStore.user?.name || 'Usuario';
+		return authStore.user?.name;
 	}
 
 	get companyName() {
-		return authStore.company?.razonSocial || 'Mi Empresa';
+		return authStore.company?.razonSocial;
 	}
 
 	get companyRuc() {
-		return authStore.company?.ruc || '';
+		return authStore.company?.ruc;
 	}
 
 	// Simular carga de estadísticas (aquí irá tu API call)

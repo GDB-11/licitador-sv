@@ -3,6 +3,7 @@
 import { apiService } from '$lib/services/api.service';
 import { API_ENDPOINTS } from '$lib/config/api.config';
 import type { AuthState, User, LoginResponse, Company } from '$lib/types/auth.types';
+import { goto } from '$app/navigation';
 
 class AuthStore {
 	private state = $state<AuthState>({
@@ -141,6 +142,7 @@ class AuthStore {
 		} catch (error) {
 			console.error('Error al obtener información de la empresa:', error);
 			this.state.company = null;
+			goto('/login');
 			return false;
 		}
 	}
@@ -164,6 +166,7 @@ class AuthStore {
 			this.state.isAuthenticated = false;
 			this.state.error = null;
 			apiService.clearTokens();
+			goto("/login");
 		}
 	}
 
