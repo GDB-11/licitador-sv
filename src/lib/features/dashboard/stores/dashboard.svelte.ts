@@ -1,6 +1,8 @@
 // src/lib/features/dashboard/stores/dashboard.svelte.ts
-import { writable } from 'svelte/store';
+import { apiService } from '$lib/services/api.service';
+import { API_ENDPOINTS } from '$lib/config/api.config';
 import { authStore } from '$lib/features/auth/stores/auth.svelte';
+import type { CompanyStatisticsResponse } from '../types';
 
 // Tipos
 export interface Estadisticas {
@@ -72,17 +74,26 @@ class DashboardStore {
 		this.data.error = null;
 
 		try {
-			// TODO: Reemplazar con tu llamada real a la API
-			// const response = await fetch('/api/dashboard/estadisticas');
-			// const data = await response.json();
-
-			// Simulación de respuesta de API
-			await new Promise((resolve) => setTimeout(resolve, 500));
-
+			const companyId = authStore.company?.companyId;
+			
+			if (!companyId) {
+				// Si no hay companyId, intentar cargar la información de la empresa primero				
+				const companyLoaded = await authStore.fetchCompany();
+				if (!companyLoaded || !authStore.company?.companyId) {
+					throw new Error('No se encontró información de la empresa. Por favor, inicie sesión nuevamente.');
+				}
+			}
+			
+			const response = await apiService.get<CompanyStatisticsResponse>(
+				API_ENDPOINTS.company.statistics(authStore.company!.companyId)
+			);
+			
+			console.log('Respuesta del API de perfil:', response); // Para debugging
+			
 			this.data.estadisticas = {
-				documentosGenerados: 24,
-				perfilCompleto: 85,
-				empresasConsorciadas: 2
+				documentosGenerados: response.generatedDocuments,
+				perfilCompleto: response.completeProfilePercentage,
+				empresasConsorciadas: response.consortiaCompanies
 			};
 		} catch (err) {
 			this.data.error = err instanceof Error ? err.message : 'Error al cargar estadísticas';

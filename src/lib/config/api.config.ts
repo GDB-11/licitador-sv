@@ -18,7 +18,8 @@ export const API_ENDPOINTS = {
 	company: {
 		myCompany: '/api/Company/my-company',
 		myCompanyDetails: (companyId: string) => `/api/Company/my-company-details/${companyId}`,
-		updateCompanyDetails: '/api/Company/update-company-details'
+		updateCompanyDetails: '/api/Company/update-company-details',
+		statistics: (companyId: string) => `/api/Company/statistics/${companyId}`
 	},
 	perfil: {
 		empresarial: '/api/perfil-empresarial',

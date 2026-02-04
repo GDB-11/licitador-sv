@@ -35,7 +35,7 @@
 			<!-- Gestionar Perfil -->
 			<button
 				onclick={onGestionarPerfil}
-				class="w-full flex items-center justify-between px-4 py-3 rounded-lg bg-gray-50 dark:bg-gray-700/50 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors group"
+				class="w-full flex items-center justify-between px-4 py-3 rounded-lg bg-gray-50 dark:bg-gray-700/50 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors group cursor-pointer"
 			>
 				<div class="flex items-center space-x-3">
 					<div class="w-10 h-10 rounded-lg bg-purple-100 dark:bg-purple-900/50 flex items-center justify-center">
@@ -74,7 +74,7 @@
 			<!-- NUEVO: Gestionar Empresas Consorciadas -->
 			<button
 				onclick={onGestionarConsorciadas}
-				class="w-full flex items-center justify-between px-4 py-3 rounded-lg bg-gray-50 dark:bg-gray-700/50 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors group"
+				class="w-full flex items-center justify-between px-4 py-3 rounded-lg bg-gray-50 dark:bg-gray-700/50 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors group cursor-pointer"
 			>
 				<div class="flex items-center space-x-3">
 					<div class="w-10 h-10 rounded-lg bg-emerald-100 dark:bg-emerald-900/50 flex items-center justify-center">

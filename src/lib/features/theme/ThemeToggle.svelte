@@ -26,7 +26,7 @@
          hover:bg-gray-300 dark:hover:bg-gray-600
          transition-colors duration-200
          focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2
-         dark:focus:ring-offset-gray-900"
+         dark:focus:ring-offset-gray-900 cursor-pointer"
 	aria-label={currentTheme === 'light' ? 'Cambiar a modo oscuro' : 'Cambiar a modo claro'}
 	title={currentTheme === 'light' ? 'Modo oscuro' : 'Modo claro'}
 >

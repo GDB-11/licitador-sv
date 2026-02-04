@@ -36,7 +36,7 @@
 		{#if onCompletar}
 			<button
 				onclick={onCompletar}
-				class="mt-2 text-sm font-medium text-amber-600 dark:text-amber-400 hover:text-amber-800 dark:hover:text-amber-300 transition-colors"
+				class="mt-2 text-sm font-medium text-amber-600 dark:text-amber-400 hover:text-amber-800 dark:hover:text-amber-300 transition-colors cursor-pointer"
 			>
 				Completar ahora →
 			</button>

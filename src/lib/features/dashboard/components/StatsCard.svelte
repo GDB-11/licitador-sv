@@ -36,7 +36,7 @@
 		{#if onEdit}
 			<button
 				onclick={onEdit}
-				class="text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 font-medium transition-colors"
+				class="text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 font-medium transition-colors cursor-pointer"
 			>
 				Editar
 			</button>

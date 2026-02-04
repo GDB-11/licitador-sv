@@ -74,7 +74,7 @@
 									{#if onVer}
 										<button
 											onclick={() => onVer(doc.id)}
-											class="p-1 text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+											class="p-1 text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors cursor-pointer"
 											title="Ver documento"
 										>
 											<svg
@@ -101,7 +101,7 @@
 									{#if onDescargar}
 										<button
 											onclick={() => onDescargar(doc.id)}
-											class="p-1 text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+											class="p-1 text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors cursor-pointer"
 											title="Descargar documento"
 										>
 											<svg
@@ -133,7 +133,7 @@
 			>
 				<button
 					onclick={onVerTodos}
-					class="text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 font-medium transition-colors"
+					class="text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 font-medium transition-colors cursor-pointer"
 				>
 					Ver todos los documentos →
 				</button>
