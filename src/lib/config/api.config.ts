@@ -47,7 +47,7 @@ export const API_ENDPOINTS = {
 		descargar: (id: string) => `/api/documentos/${id}/descargar`
 	},
 	document: {
-		generateAnnexes: '/api/Document/generate-annexes-single',
+		generateAnnexesSingle: '/api/Document/generate-annexes-single',
 		recent: '/api/Document/recent',
 		delete: (id: string) => `/api/Document/${id}`
 	}

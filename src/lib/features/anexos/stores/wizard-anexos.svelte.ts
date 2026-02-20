@@ -273,7 +273,7 @@ class WizardAnexosStore {
 			};
 
 			// Call API
-			const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.document.generateAnnexes}`, {
+			const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.document.generateAnnexesSingle}`, {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
