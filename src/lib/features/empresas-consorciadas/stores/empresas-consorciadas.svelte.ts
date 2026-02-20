@@ -1,11 +1,15 @@
 // src/lib/features/empresas-consorciadas/stores/empresas-consorciadas.svelte.ts
+import { apiService } from '$lib/services/api.service';
+import { API_ENDPOINTS } from '$lib/config/api.config';
 import type {
 	EmpresaConsorciada,
 	EmpresaConsorciadaFormData,
 	EmpresasConsorciadasState,
 	ValidationErrors,
-	EmpresasResumen
+	EmpresasResumen,
+	ApiListResponse
 } from '../types';
+import { mapApiToEmpresa } from '../types';
 
 class EmpresasConsorciadasStore {
 	private state = $state<EmpresasConsorciadasState>({
@@ -18,10 +22,11 @@ class EmpresasConsorciadasStore {
 		filtroActivas: true
 	});
 
-	// Getters reactivos
+	// ─── Getters reactivos ────────────────────────────────────────────────────
+
 	get empresas() {
-		return this.state.filtroActivas 
-			? this.state.empresas.filter(e => e.activo)
+		return this.state.filtroActivas
+			? this.state.empresas.filter((e) => e.activo)
 			: this.state.empresas;
 	}
 
@@ -55,108 +60,33 @@ class EmpresasConsorciadasStore {
 
 	get resumen(): EmpresasResumen {
 		const totalEmpresas = this.state.empresas.length;
-		const empresasActivas = this.state.empresas.filter(e => e.activo).length;
+		const empresasActivas = this.state.empresas.filter((e) => e.activo).length;
 		const empresasInactivas = totalEmpresas - empresasActivas;
-		const empresasConRNPVigente = this.state.empresas.filter(e => {
+		const empresasConRNPVigente = this.state.empresas.filter((e) => {
 			if (!e.vigenciaRNPHasta) return false;
 			return new Date(e.vigenciaRNPHasta) > new Date();
 		}).length;
-		
-		return {
-			totalEmpresas,
-			empresasActivas,
-			empresasInactivas,
-			empresasConRNPVigente
-		};
+
+		return { totalEmpresas, empresasActivas, empresasInactivas, empresasConRNPVigente };
 	}
 
-	// Cambiar filtro de empresas activas
+	// ─── Filtro ───────────────────────────────────────────────────────────────
+
 	setFiltroActivas(mostrarSoloActivas: boolean) {
 		this.state.filtroActivas = mostrarSoloActivas;
 	}
 
-	// Cargar empresas desde API
-	async fetchEmpresas() {
+	// ─── API: Cargar lista ────────────────────────────────────────────────────
+
+	async fetchEmpresas(companyId: string): Promise<void> {
 		this.state.isLoading = true;
 		this.state.error = null;
 
 		try {
-			// TODO: Reemplazar con tu llamada real a la API
-			// const response = await fetch('/api/empresas-consorciadas', {
-			//   method: 'GET',
-			//   headers: { 'Authorization': `Bearer ${token}` }
-			// });
-			// const data = await response.json();
-
-			// Simulación de respuesta de API
-			await new Promise((resolve) => setTimeout(resolve, 800));
-
-			const empresasSimuladas: EmpresaConsorciada[] = [
-				{
-					id: 1,
-					ruc: '20534233532',
-					razonSocial: 'CONSTRUCTORA EL ARENAL S.A.C.',
-					nombreComercial: 'El Arenal',
-					domicilioFiscal: 'Av. Los Pinos 123, Lima, Lima, Perú',
-					representanteLegal: {
-						dni: '12345678',
-						nombresCompletos: 'Juan Carlos Pérez García',
-						cargo: 'Gerente General'
-					},
-					contacto: {
-						telefono: '987654321',
-						correoElectronico: 'contacto@elarenal.com'
-					},
-					actividadPrincipal: 'Construcción de edificios completos',
-					registroRNP: 'A123456',
-					vigenciaRNPHasta: '2025-12-31',
-					fechaRegistro: '2025-01-15',
-					activo: true
-				},
-				{
-					id: 2,
-					ruc: '20601234567',
-					razonSocial: 'INGENIEROS ASOCIADOS S.A.',
-					nombreComercial: 'Ingenieros Asociados',
-					domicilioFiscal: 'Jr. Las Flores 456, Lima, Lima, Perú',
-					representanteLegal: {
-						dni: '87654321',
-						nombresCompletos: 'María Elena Torres Vega',
-						cargo: 'Gerente General'
-					},
-					contacto: {
-						telefono: '912345678',
-						correoElectronico: 'mtorres@ingenierosasociados.com'
-					},
-					actividadPrincipal: 'Servicios de ingeniería civil',
-					registroRNP: 'B789012',
-					vigenciaRNPHasta: '2026-03-15',
-					fechaRegistro: '2025-01-15',
-					activo: true
-				},
-				{
-					id: 3,
-					ruc: '20445566778',
-					razonSocial: 'CONSULTORÍA TÉCNICA PERU S.R.L.',
-					domicilioFiscal: 'Av. Arequipa 2450, Lima, Lima, Perú',
-					representanteLegal: {
-						dni: '44556677',
-						nombresCompletos: 'Roberto Sánchez Mejía',
-						cargo: 'Gerente General'
-					},
-					contacto: {
-						telefono: '945678901',
-						correoElectronico: 'info@consultecperu.com'
-					},
-					actividadPrincipal: 'Consultoría en proyectos de construcción',
-					registroRNP: 'C345678',
-					vigenciaRNPHasta: '2024-11-30', // Vencido
-					fechaRegistro: '2024-06-10',
-					activo: false
-				}
-			];
-
-			this.state.empresas = empresasSimuladas;
+			const data = await apiService.get<ApiListResponse>(
+				API_ENDPOINTS.consortium.list(companyId)
+			);
+			this.state.empresas = (data.companies ?? []).map(mapApiToEmpresa);
 		} catch (err) {
 			this.state.error = err instanceof Error ? err.message : 'Error al cargar empresas';
 		} finally {
@@ -164,32 +94,39 @@ class EmpresasConsorciadasStore {
 		}
 	}
 
-	// Agregar nueva empresa
-	async agregarEmpresa(data: EmpresaConsorciadaFormData): Promise<boolean> {
+	// ─── API: Crear empresa ───────────────────────────────────────────────────
+
+	async agregarEmpresa(companyId: string, data: EmpresaConsorciadaFormData): Promise<boolean> {
 		this.state.isSaving = true;
 		this.state.error = null;
 		this.state.validationErrors = {};
 
+		const errors = this.validarEmpresa(data);
+		if (Object.keys(errors).length > 0) {
+			this.state.validationErrors = errors;
+			this.state.isSaving = false;
+			return false;
+		}
+
 		try {
-			// Validar datos
-			const errors = this.validarEmpresa(data);
-			if (Object.keys(errors).length > 0) {
-				this.state.validationErrors = errors;
-				this.state.isSaving = false;
-				return false;
-			}
+			await apiService.post<void>(API_ENDPOINTS.consortium.create, {
+				companyId,
+				ruc:             data.ruc,
+				rnpRegistration: data.registroRNP       || null,
+				razonSocial:     data.razonSocial,
+				nombreComercial: data.nombreComercial   || null,
+				rnpValidUntil:   data.vigenciaRNPHasta  || null,
+				mainActivity:    data.actividadPrincipal || null,
+				domicilioFiscal: data.domicilioFiscal,
+				contactPhone:    data.contacto.telefono          || null,
+				contactEmail:    data.contacto.correoElectronico || null,
+				dni:             data.representanteLegal.dni,
+				fullName:        data.representanteLegal.nombresCompletos,
+				position:        data.representanteLegal.cargo
+			});
 
-			// TODO: Reemplazar con tu llamada real a la API
-			await new Promise((resolve) => setTimeout(resolve, 1000));
-
-			const nuevaEmpresa: EmpresaConsorciada = {
-				id: Date.now(),
-				...data,
-				fechaRegistro: new Date().toISOString().split('T')[0],
-				activo: true
-			};
-
-			this.state.empresas = [...this.state.empresas, nuevaEmpresa];
+			// Recargar para obtener el ID asignado por el servidor
+			await this.fetchEmpresas(companyId);
 			return true;
 		} catch (err) {
 			this.state.error = err instanceof Error ? err.message : 'Error al agregar empresa';
@@ -199,31 +136,67 @@ class EmpresasConsorciadasStore {
 		}
 	}
 
-	// Actualizar empresa existente
-	async actualizarEmpresa(id: number, data: EmpresaConsorciadaFormData): Promise<boolean> {
+	// ─── API: Actualizar empresa ──────────────────────────────────────────────
+
+	async actualizarEmpresa(
+		companyId: string,
+		consortiumCompanyId: string,
+		data: EmpresaConsorciadaFormData
+	): Promise<boolean> {
 		this.state.isSaving = true;
 		this.state.error = null;
 		this.state.validationErrors = {};
 
+		const errors = this.validarEmpresa(data, consortiumCompanyId);
+		if (Object.keys(errors).length > 0) {
+			this.state.validationErrors = errors;
+			this.state.isSaving = false;
+			return false;
+		}
+
 		try {
-			// Validar datos
-			const errors = this.validarEmpresa(data);
-			if (Object.keys(errors).length > 0) {
-				this.state.validationErrors = errors;
-				this.state.isSaving = false;
-				return false;
-			}
+			await apiService.put<void>(API_ENDPOINTS.consortium.update, {
+				consortiumCompanyId,
+				companyId,
+				ruc:             data.ruc,
+				rnpRegistration: data.registroRNP       || null,
+				razonSocial:     data.razonSocial,
+				nombreComercial: data.nombreComercial   || null,
+				rnpValidUntil:   data.vigenciaRNPHasta  || null,
+				mainActivity:    data.actividadPrincipal || null,
+				domicilioFiscal: data.domicilioFiscal,
+				contactPhone:    data.contacto.telefono          || null,
+				contactEmail:    data.contacto.correoElectronico || null,
+				consortiumLegalRepresentativeId:
+					data.representanteLegal.consortiumLegalRepresentativeId ?? null,
+				dni:      data.representanteLegal.dni,
+				fullName: data.representanteLegal.nombresCompletos,
+				position: data.representanteLegal.cargo
+			});
 
-			await new Promise((resolve) => setTimeout(resolve, 1000));
-
-			this.state.empresas = this.state.empresas.map((empresa) =>
-				empresa.id === id
-					? { 
-						...empresa, 
-						...data,
-						fechaActualizacion: new Date().toISOString().split('T')[0]
-					}
-					: empresa
+			// Actualización optimista local
+			this.state.empresas = this.state.empresas.map((e) =>
+				e.consortiumCompanyId === consortiumCompanyId
+					? {
+							...e,
+							ruc:                data.ruc,
+							razonSocial:        data.razonSocial,
+							nombreComercial:    data.nombreComercial,
+							domicilioFiscal:    data.domicilioFiscal,
+							actividadPrincipal: data.actividadPrincipal,
+							registroRNP:        data.registroRNP,
+							vigenciaRNPHasta:   data.vigenciaRNPHasta,
+							contacto: { ...data.contacto },
+							representanteLegal: {
+								consortiumLegalRepresentativeId:
+									data.representanteLegal.consortiumLegalRepresentativeId ?? null,
+								dni:              data.representanteLegal.dni,
+								nombresCompletos: data.representanteLegal.nombresCompletos,
+								cargo:            data.representanteLegal.cargo
+							},
+							fechaActualizacion: new Date().toISOString()
+					  }
+					: e
 			);
 
 			return true;
@@ -235,21 +208,20 @@ class EmpresasConsorciadasStore {
 		}
 	}
 
-	// Eliminar empresa
-	async eliminarEmpresa(id: number): Promise<boolean> {
+	// ─── API: Eliminar empresa ────────────────────────────────────────────────
+
+	async eliminarEmpresa(companyId: string, consortiumCompanyId: string): Promise<boolean> {
 		this.state.isSaving = true;
 		this.state.error = null;
 
 		try {
-			await new Promise((resolve) => setTimeout(resolve, 800));
-			
-			// En lugar de eliminar físicamente, marcar como inactiva
-			this.state.empresas = this.state.empresas.map((empresa) =>
-				empresa.id === id
-					? { ...empresa, activo: false }
-					: empresa
+			await apiService.delete<void>(
+				API_ENDPOINTS.consortium.delete(companyId, consortiumCompanyId)
 			);
 
+			this.state.empresas = this.state.empresas.filter(
+				(e) => e.consortiumCompanyId !== consortiumCompanyId
+			);
 			return true;
 		} catch (err) {
 			this.state.error = err instanceof Error ? err.message : 'Error al eliminar empresa';
@@ -259,100 +231,78 @@ class EmpresasConsorciadasStore {
 		}
 	}
 
-	// Activar/Desactivar empresa
-	async toggleEmpresaActiva(id: number): Promise<boolean> {
-		try {
-			this.state.empresas = this.state.empresas.map((empresa) =>
-				empresa.id === id
-					? { ...empresa, activo: !empresa.activo }
-					: empresa
-			);
-			return true;
-		} catch (err) {
-			this.state.error = err instanceof Error ? err.message : 'Error al cambiar estado de empresa';
-			return false;
-		}
-	}
+	// ─── Estado local ─────────────────────────────────────────────────────────
 
-	// Seleccionar empresa para edición
 	seleccionarEmpresa(empresa: EmpresaConsorciada | null) {
 		this.state.empresaSeleccionada = empresa;
 	}
 
-	// Buscar empresa por RUC
 	buscarPorRUC(ruc: string): EmpresaConsorciada | undefined {
-		return this.state.empresas.find(e => e.ruc === ruc);
+		return this.state.empresas.find((e) => e.ruc === ruc);
 	}
 
-	// Validaciones
-	private validarEmpresa(data: EmpresaConsorciadaFormData): ValidationErrors {
+	limpiarErrores() {
+		this.state.error = null;
+		this.state.validationErrors = {};
+	}
+
+	// ─── Validaciones ─────────────────────────────────────────────────────────
+
+	private validarEmpresa(
+		data: EmpresaConsorciadaFormData,
+		excludeId?: string
+	): ValidationErrors {
 		const errors: ValidationErrors = {};
 
-		// Validar RUC
 		if (!data.ruc || !/^\d{11}$/.test(data.ruc)) {
 			errors['ruc'] = 'El RUC debe tener 11 dígitos';
+		} else {
+			const duplicado = this.state.empresas.find(
+				(e) => e.ruc === data.ruc && e.consortiumCompanyId !== excludeId
+			);
+			if (duplicado) errors['ruc'] = 'Ya existe una empresa con este RUC';
 		}
 
-		// Verificar RUC duplicado
-		const empresaExistente = this.state.empresas.find(
-			e => e.ruc === data.ruc && e.id !== this.state.empresaSeleccionada?.id
-		);
-		if (empresaExistente) {
-			errors['ruc'] = 'Ya existe una empresa con este RUC';
-		}
-
-		// Validar Razón Social
-		if (!data.razonSocial || data.razonSocial.trim() === '') {
+		if (!data.razonSocial?.trim()) {
 			errors['razonSocial'] = 'La razón social es obligatoria';
 		}
 
-		// Validar Domicilio Fiscal
-		if (!data.domicilioFiscal || data.domicilioFiscal.trim() === '') {
+		if (!data.domicilioFiscal?.trim()) {
 			errors['domicilioFiscal'] = 'El domicilio fiscal es obligatorio';
 		}
 
-		// Validar DNI del representante
 		if (!data.representanteLegal.dni || !/^\d{8}$/.test(data.representanteLegal.dni)) {
 			errors['representanteLegal.dni'] = 'El DNI debe tener 8 dígitos';
 		}
 
-		// Validar Nombres del representante
-		if (!data.representanteLegal.nombresCompletos || data.representanteLegal.nombresCompletos.trim() === '') {
+		if (!data.representanteLegal.nombresCompletos?.trim()) {
 			errors['representanteLegal.nombresCompletos'] = 'Los nombres completos son obligatorios';
 		}
 
-		// Validar Cargo
-		if (!data.representanteLegal.cargo || data.representanteLegal.cargo.trim() === '') {
+		if (!data.representanteLegal.cargo?.trim()) {
 			errors['representanteLegal.cargo'] = 'El cargo es obligatorio';
 		}
 
-		// Validar Teléfono
 		if (!data.contacto.telefono || !/^\d{9}$/.test(data.contacto.telefono)) {
 			errors['contacto.telefono'] = 'El teléfono debe tener 9 dígitos';
 		}
 
-		// Validar Correo
-		if (!data.contacto.correoElectronico || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.contacto.correoElectronico)) {
+		if (
+			!data.contacto.correoElectronico ||
+			!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.contacto.correoElectronico)
+		) {
 			errors['contacto.correoElectronico'] = 'El correo electrónico no es válido';
 		}
 
-		// Validar fecha de vigencia RNP si existe
 		if (data.vigenciaRNPHasta) {
-			const fechaVigencia = new Date(data.vigenciaRNPHasta);
-			if (isNaN(fechaVigencia.getTime())) {
+			const fecha = new Date(data.vigenciaRNPHasta);
+			if (isNaN(fecha.getTime())) {
 				errors['vigenciaRNPHasta'] = 'La fecha de vigencia no es válida';
 			}
 		}
 
 		return errors;
 	}
-
-	// Limpiar errores
-	limpiarErrores() {
-		this.state.error = null;
-		this.state.validationErrors = {};
-	}
 }
 
-// Exportar instancia única del store
 export const empresasConsorciadasStore = new EmpresasConsorciadasStore();

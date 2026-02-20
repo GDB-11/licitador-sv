@@ -2,21 +2,30 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { empresasConsorciadasStore } from '$lib/features/empresas-consorciadas/stores/empresas-consorciadas.svelte';
+	import { authStore } from '$lib/features/auth/stores/auth.svelte';
 	import ListaEmpresas from '$lib/features/empresas-consorciadas/components/ListaEmpresas.svelte';
 	import ResumenEmpresas from '$lib/features/empresas-consorciadas/components/ResumenEmpresas.svelte';
 	import FormularioEmpresa from '$lib/features/empresas-consorciadas/components/FormularioEmpresa.svelte';
 	import type { EmpresaConsorciadaFormData, EmpresaConsorciada } from '$lib/features/empresas-consorciadas/types';
 
-	// Estado de la vista
+	// companyId viene de authStore.company (store separado, igual que en dashboardStore)
+	const companyId = $derived(authStore.company?.companyId ?? '');
+
 	let mostrarFormulario = $state(false);
 	let modoEdicion = $state(false);
 
-	// Cargar empresas al montar el componente
-	onMount(() => {
-		empresasConsorciadasStore.fetchEmpresas();
+	onMount(async () => {
+		// Si la empresa aún no está cargada, esperarla primero (igual que dashboardStore)
+		if (!authStore.company) {
+			await authStore.fetchCompany();
+		}
+		if (companyId) {
+			await empresasConsorciadasStore.fetchEmpresas(companyId);
+		}
 	});
 
-	// Handlers
+	// ─── Handlers ─────────────────────────────────────────────────────────────
+
 	const handleAgregarNueva = () => {
 		empresasConsorciadasStore.seleccionarEmpresa(null);
 		empresasConsorciadasStore.limpiarErrores();
@@ -31,17 +40,9 @@
 		mostrarFormulario = true;
 	};
 
-	const handleEliminar = async (id: number) => {
-		if (confirm('¿Estás seguro de que deseas eliminar esta empresa? Esta acción la marcará como inactiva.')) {
-			const success = await empresasConsorciadasStore.eliminarEmpresa(id);
-			if (success) {
-				// Opcional: Mostrar mensaje de éxito
-			}
-		}
-	};
-
-	const handleToggleActivo = async (id: number) => {
-		await empresasConsorciadasStore.toggleEmpresaActiva(id);
+	const handleEliminar = async (consortiumCompanyId: string) => {
+		if (!confirm('¿Estás seguro de que deseas eliminar esta empresa? Esta acción no se puede deshacer.')) return;
+		await empresasConsorciadasStore.eliminarEmpresa(companyId, consortiumCompanyId);
 	};
 
 	const handleToggleFiltro = () => {
@@ -50,14 +51,16 @@
 
 	const handleGuardar = async (data: EmpresaConsorciadaFormData) => {
 		let success = false;
+		const seleccionada = empresasConsorciadasStore.empresaSeleccionada;
 
-		if (modoEdicion && empresasConsorciadasStore.empresaSeleccionada) {
+		if (modoEdicion && seleccionada) {
 			success = await empresasConsorciadasStore.actualizarEmpresa(
-				empresasConsorciadasStore.empresaSeleccionada.id,
+				companyId,
+				seleccionada.consortiumCompanyId,
 				data
 			);
 		} else {
-			success = await empresasConsorciadasStore.agregarEmpresa(data);
+			success = await empresasConsorciadasStore.agregarEmpresa(companyId, data);
 		}
 
 		if (success) {
@@ -124,7 +127,7 @@
 			</div>
 		</div>
 
-		<!-- Mensajes de Error Global -->
+		<!-- Error global -->
 		{#if empresasConsorciadasStore.error}
 			<div class="mb-6 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-lg p-4">
 				<div class="flex items-center">
@@ -134,7 +137,7 @@
 						viewBox="0 0 24 24"
 						stroke-width="2"
 						stroke="currentColor"
-						class="w-5 h-5 text-red-600 dark:text-red-400 mr-2"
+						class="w-5 h-5 text-red-600 dark:text-red-400 mr-2 flex-shrink-0"
 					>
 						<path
 							stroke-linecap="round"
@@ -145,13 +148,21 @@
 					<p class="text-sm font-medium text-red-800 dark:text-red-300">
 						{empresasConsorciadasStore.error}
 					</p>
+					<button
+						onclick={() => empresasConsorciadasStore.limpiarErrores()}
+						class="ml-auto text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-200"
+					>
+						<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+							<path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+						</svg>
+					</button>
 				</div>
 			</div>
 		{/if}
 
 		<!-- Resumen de Empresas -->
 		<div class="mb-8">
-			<ResumenEmpresas 
+			<ResumenEmpresas
 				resumen={empresasConsorciadasStore.resumen}
 				onToggleFiltro={handleToggleFiltro}
 				mostrandoSoloActivas={empresasConsorciadasStore.filtroActivas}
@@ -176,11 +187,10 @@
 			empresas={empresasConsorciadasStore.empresas}
 			onEditar={handleEditar}
 			onEliminar={handleEliminar}
-			onToggleActivo={handleToggleActivo}
 			isLoading={empresasConsorciadasStore.isLoading}
 		/>
 
-		<!-- Información Adicional -->
+		<!-- Información adicional -->
 		{#if empresasConsorciadasStore.todasLasEmpresas.length > 0}
 			<div class="mt-8 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-6">
 				<div class="flex items-start">
@@ -206,7 +216,7 @@
 							<li>Registra aquí todas las empresas que podrían participar en consorcios</li>
 							<li>Los porcentajes de participación se definirán al momento de generar los documentos para cada licitación</li>
 							<li>Mantén actualizada la información del RNP (Registro Nacional de Proveedores)</li>
-							<li>Las empresas marcadas como inactivas no aparecerán disponibles para formar consorcios</li>
+							<li>Las empresas eliminadas no aparecerán disponibles para formar consorcios</li>
 							<li>Verifica que los datos del representante legal estén siempre actualizados</li>
 						</ul>
 					</div>
@@ -214,7 +224,7 @@
 			</div>
 		{/if}
 
-		<!-- Nota sobre el uso de las empresas -->
+		<!-- Nota sobre el uso -->
 		<div class="mt-4 bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
 			<div class="flex items-start">
 				<svg
@@ -233,9 +243,10 @@
 				</svg>
 				<div class="text-sm text-gray-600 dark:text-gray-400">
 					<p>
-						<strong>¿Cómo se usan estas empresas?</strong> Al generar documentos para una licitación específica, 
-						podrás seleccionar qué empresas formarán el consorcio, definir sus porcentajes de participación, 
-						designar la empresa líder, y generar automáticamente todos los formatos necesarios con la información aquí registrada.
+						<strong>¿Cómo se usan estas empresas?</strong> Al generar documentos para una licitación
+						específica, podrás seleccionar qué empresas formarán el consorcio, definir sus porcentajes
+						de participación, designar la empresa líder, y generar automáticamente todos los formatos
+						necesarios con la información aquí registrada.
 					</p>
 				</div>
 			</div>

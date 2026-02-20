@@ -1,7 +1,7 @@
 <!-- src/lib/features/empresas-consorciadas/components/FormularioEmpresa.svelte -->
 <script lang="ts">
 	import type { EmpresaConsorciada, EmpresaConsorciadaFormData, ValidationErrors } from '../types';
-	
+
 	interface FormularioEmpresaProps {
 		empresa?: EmpresaConsorciada | null;
 		onGuardar: (data: EmpresaConsorciadaFormData) => Promise<void>;
@@ -9,38 +9,36 @@
 		isSaving: boolean;
 		validationErrors: ValidationErrors;
 	}
-	
+
 	let { empresa = null, onGuardar, onCancelar, isSaving, validationErrors }: FormularioEmpresaProps = $props();
-	
-	// Estado del formulario
+
+	// Estado del formulario inicializado desde la empresa seleccionada (si existe)
 	let formData = $state<EmpresaConsorciadaFormData>({
-		ruc: empresa?.ruc || '',
-		razonSocial: empresa?.razonSocial || '',
-		nombreComercial: empresa?.nombreComercial || '',
-		domicilioFiscal: empresa?.domicilioFiscal || '',
+		ruc: empresa?.ruc ?? '',
+		razonSocial: empresa?.razonSocial ?? '',
+		nombreComercial: empresa?.nombreComercial ?? '',
+		domicilioFiscal: empresa?.domicilioFiscal ?? '',
 		representanteLegal: {
-			dni: empresa?.representanteLegal.dni || '',
-			nombresCompletos: empresa?.representanteLegal.nombresCompletos || '',
-			cargo: empresa?.representanteLegal.cargo || ''
+			consortiumLegalRepresentativeId: empresa?.representanteLegal.consortiumLegalRepresentativeId ?? null,
+			dni: empresa?.representanteLegal.dni ?? '',
+			nombresCompletos: empresa?.representanteLegal.nombresCompletos ?? '',
+			cargo: empresa?.representanteLegal.cargo ?? ''
 		},
 		contacto: {
-			telefono: empresa?.contacto.telefono || '',
-			correoElectronico: empresa?.contacto.correoElectronico || ''
+			telefono: empresa?.contacto.telefono ?? '',
+			correoElectronico: empresa?.contacto.correoElectronico ?? ''
 		},
-		actividadPrincipal: empresa?.actividadPrincipal || '',
-		registroRNP: empresa?.registroRNP || '',
-		vigenciaRNPHasta: empresa?.vigenciaRNPHasta || '',
-		activo: empresa?.activo ?? true
+		actividadPrincipal: empresa?.actividadPrincipal ?? '',
+		registroRNP: empresa?.registroRNP ?? '',
+		vigenciaRNPHasta: empresa?.vigenciaRNPHasta ?? ''
 	});
-	
+
 	const handleSubmit = async (e: Event) => {
 		e.preventDefault();
 		await onGuardar(formData);
 	};
-	
-	const getErrorMessage = (field: string): string | undefined => {
-		return validationErrors[field];
-	};
+
+	const err = (field: string) => validationErrors[field];
 </script>
 
 <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
@@ -50,31 +48,21 @@
 			{empresa ? 'Editar Empresa' : 'Nueva Empresa'}
 		</h3>
 		<p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
-			{empresa ? 'Actualiza los datos de la empresa' : 'Registra los datos de una nueva empresa'}
+			{empresa ? 'Actualiza los datos de la empresa consorciada' : 'Registra una nueva empresa para el consorcio'}
 		</p>
 	</div>
-	
-	<!-- Formulario -->
+
 	<form onsubmit={handleSubmit} class="p-6 space-y-6">
-		<!-- Datos Generales -->
-		<div>
+
+		<!-- ── Datos Generales ─────────────────────────────────────────────── -->
+		<section>
 			<h4 class="text-sm font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
-				<svg
-					xmlns="http://www.w3.org/2000/svg"
-					fill="none"
-					viewBox="0 0 24 24"
-					stroke-width="2"
-					stroke="currentColor"
-					class="w-5 h-5 mr-2 text-blue-600 dark:text-blue-400"
-				>
-					<path
-						stroke-linecap="round"
-						stroke-linejoin="round"
-						d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 3.75h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008z"
-					/>
+				<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5 mr-2 text-blue-600 dark:text-blue-400">
+					<path stroke-linecap="round" stroke-linejoin="round" d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 3.75h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008z" />
 				</svg>
 				Datos Generales
 			</h4>
+
 			<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
 				<!-- RUC -->
 				<div>
@@ -87,15 +75,13 @@
 						bind:value={formData.ruc}
 						maxlength="11"
 						placeholder="20XXXXXXXXX"
-						class="w-full px-4 py-2 border {getErrorMessage('ruc')
-							? 'border-red-500 dark:border-red-500'
-							: 'border-gray-300 dark:border-gray-600'} rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+						class="w-full px-4 py-2 border {err('ruc') ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'} rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
 					/>
-					{#if getErrorMessage('ruc')}
-						<p class="mt-1 text-sm text-red-600 dark:text-red-400">{getErrorMessage('ruc')}</p>
+					{#if err('ruc')}
+						<p class="mt-1 text-sm text-red-600 dark:text-red-400">{err('ruc')}</p>
 					{/if}
 				</div>
-				
+
 				<!-- Registro RNP -->
 				<div>
 					<label for="registroRNP" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -109,7 +95,7 @@
 						class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
 					/>
 				</div>
-				
+
 				<!-- Razón Social -->
 				<div class="md:col-span-2">
 					<label for="razonSocial" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -120,15 +106,13 @@
 						id="razonSocial"
 						bind:value={formData.razonSocial}
 						placeholder="CONSTRUCTORA EJEMPLO S.A.C."
-						class="w-full px-4 py-2 border {getErrorMessage('razonSocial')
-							? 'border-red-500 dark:border-red-500'
-							: 'border-gray-300 dark:border-gray-600'} rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+						class="w-full px-4 py-2 border {err('razonSocial') ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'} rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
 					/>
-					{#if getErrorMessage('razonSocial')}
-						<p class="mt-1 text-sm text-red-600 dark:text-red-400">{getErrorMessage('razonSocial')}</p>
+					{#if err('razonSocial')}
+						<p class="mt-1 text-sm text-red-600 dark:text-red-400">{err('razonSocial')}</p>
 					{/if}
 				</div>
-				
+
 				<!-- Nombre Comercial -->
 				<div>
 					<label for="nombreComercial" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -138,11 +122,11 @@
 						type="text"
 						id="nombreComercial"
 						bind:value={formData.nombreComercial}
-						placeholder="Nombre comercial"
+						placeholder="Nombre comercial (opcional)"
 						class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
 					/>
 				</div>
-				
+
 				<!-- Vigencia RNP -->
 				<div>
 					<label for="vigenciaRNP" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -152,15 +136,13 @@
 						type="date"
 						id="vigenciaRNP"
 						bind:value={formData.vigenciaRNPHasta}
-						class="w-full px-4 py-2 border {getErrorMessage('vigenciaRNPHasta')
-							? 'border-red-500 dark:border-red-500'
-							: 'border-gray-300 dark:border-gray-600'} rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+						class="w-full px-4 py-2 border {err('vigenciaRNPHasta') ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'} rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
 					/>
-					{#if getErrorMessage('vigenciaRNPHasta')}
-						<p class="mt-1 text-sm text-red-600 dark:text-red-400">{getErrorMessage('vigenciaRNPHasta')}</p>
+					{#if err('vigenciaRNPHasta')}
+						<p class="mt-1 text-sm text-red-600 dark:text-red-400">{err('vigenciaRNPHasta')}</p>
 					{/if}
 				</div>
-				
+
 				<!-- Actividad Principal -->
 				<div class="md:col-span-2">
 					<label for="actividadPrincipal" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -174,7 +156,7 @@
 						class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
 					/>
 				</div>
-				
+
 				<!-- Domicilio Fiscal -->
 				<div class="md:col-span-2">
 					<label for="domicilioFiscal" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -185,36 +167,24 @@
 						bind:value={formData.domicilioFiscal}
 						rows="2"
 						placeholder="Av. Los Pinos 123, Lima, Lima, Perú"
-						class="w-full px-4 py-2 border {getErrorMessage('domicilioFiscal')
-							? 'border-red-500 dark:border-red-500'
-							: 'border-gray-300 dark:border-gray-600'} rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+						class="w-full px-4 py-2 border {err('domicilioFiscal') ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'} rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
 					></textarea>
-					{#if getErrorMessage('domicilioFiscal')}
-						<p class="mt-1 text-sm text-red-600 dark:text-red-400">{getErrorMessage('domicilioFiscal')}</p>
+					{#if err('domicilioFiscal')}
+						<p class="mt-1 text-sm text-red-600 dark:text-red-400">{err('domicilioFiscal')}</p>
 					{/if}
 				</div>
 			</div>
-		</div>
-		
-		<!-- Representante Legal -->
-		<div>
+		</section>
+
+		<!-- ── Representante Legal ─────────────────────────────────────────── -->
+		<section>
 			<h4 class="text-sm font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
-				<svg
-					xmlns="http://www.w3.org/2000/svg"
-					fill="none"
-					viewBox="0 0 24 24"
-					stroke-width="2"
-					stroke="currentColor"
-					class="w-5 h-5 mr-2 text-indigo-600 dark:text-indigo-400"
-				>
-					<path
-						stroke-linecap="round"
-						stroke-linejoin="round"
-						d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"
-					/>
+				<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5 mr-2 text-indigo-600 dark:text-indigo-400">
+					<path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
 				</svg>
 				Representante Legal
 			</h4>
+
 			<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
 				<!-- DNI -->
 				<div>
@@ -227,15 +197,13 @@
 						bind:value={formData.representanteLegal.dni}
 						maxlength="8"
 						placeholder="12345678"
-						class="w-full px-4 py-2 border {getErrorMessage('representanteLegal.dni')
-							? 'border-red-500 dark:border-red-500'
-							: 'border-gray-300 dark:border-gray-600'} rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+						class="w-full px-4 py-2 border {err('representanteLegal.dni') ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'} rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
 					/>
-					{#if getErrorMessage('representanteLegal.dni')}
-						<p class="mt-1 text-sm text-red-600 dark:text-red-400">{getErrorMessage('representanteLegal.dni')}</p>
+					{#if err('representanteLegal.dni')}
+						<p class="mt-1 text-sm text-red-600 dark:text-red-400">{err('representanteLegal.dni')}</p>
 					{/if}
 				</div>
-				
+
 				<!-- Cargo -->
 				<div>
 					<label for="cargo" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -246,15 +214,13 @@
 						id="cargo"
 						bind:value={formData.representanteLegal.cargo}
 						placeholder="Gerente General"
-						class="w-full px-4 py-2 border {getErrorMessage('representanteLegal.cargo')
-							? 'border-red-500 dark:border-red-500'
-							: 'border-gray-300 dark:border-gray-600'} rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+						class="w-full px-4 py-2 border {err('representanteLegal.cargo') ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'} rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
 					/>
-					{#if getErrorMessage('representanteLegal.cargo')}
-						<p class="mt-1 text-sm text-red-600 dark:text-red-400">{getErrorMessage('representanteLegal.cargo')}</p>
+					{#if err('representanteLegal.cargo')}
+						<p class="mt-1 text-sm text-red-600 dark:text-red-400">{err('representanteLegal.cargo')}</p>
 					{/if}
 				</div>
-				
+
 				<!-- Nombres Completos -->
 				<div class="md:col-span-2">
 					<label for="nombresCompletos" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -265,36 +231,24 @@
 						id="nombresCompletos"
 						bind:value={formData.representanteLegal.nombresCompletos}
 						placeholder="Juan Carlos Pérez García"
-						class="w-full px-4 py-2 border {getErrorMessage('representanteLegal.nombresCompletos')
-							? 'border-red-500 dark:border-red-500'
-							: 'border-gray-300 dark:border-gray-600'} rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+						class="w-full px-4 py-2 border {err('representanteLegal.nombresCompletos') ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'} rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
 					/>
-					{#if getErrorMessage('representanteLegal.nombresCompletos')}
-						<p class="mt-1 text-sm text-red-600 dark:text-red-400">{getErrorMessage('representanteLegal.nombresCompletos')}</p>
+					{#if err('representanteLegal.nombresCompletos')}
+						<p class="mt-1 text-sm text-red-600 dark:text-red-400">{err('representanteLegal.nombresCompletos')}</p>
 					{/if}
 				</div>
 			</div>
-		</div>
-		
-		<!-- Datos de Contacto -->
-		<div>
+		</section>
+
+		<!-- ── Datos de Contacto ────────────────────────────────────────────── -->
+		<section>
 			<h4 class="text-sm font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
-				<svg
-					xmlns="http://www.w3.org/2000/svg"
-					fill="none"
-					viewBox="0 0 24 24"
-					stroke-width="2"
-					stroke="currentColor"
-					class="w-5 h-5 mr-2 text-indigo-600 dark:text-indigo-400"
-				>
-					<path
-						stroke-linecap="round"
-						stroke-linejoin="round"
-						d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"
-					/>
+				<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5 mr-2 text-indigo-600 dark:text-indigo-400">
+					<path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
 				</svg>
 				Datos de Contacto
 			</h4>
+
 			<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
 				<!-- Teléfono -->
 				<div>
@@ -307,15 +261,13 @@
 						bind:value={formData.contacto.telefono}
 						maxlength="9"
 						placeholder="987654321"
-						class="w-full px-4 py-2 border {getErrorMessage('contacto.telefono')
-							? 'border-red-500 dark:border-red-500'
-							: 'border-gray-300 dark:border-gray-600'} rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+						class="w-full px-4 py-2 border {err('contacto.telefono') ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'} rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
 					/>
-					{#if getErrorMessage('contacto.telefono')}
-						<p class="mt-1 text-sm text-red-600 dark:text-red-400">{getErrorMessage('contacto.telefono')}</p>
+					{#if err('contacto.telefono')}
+						<p class="mt-1 text-sm text-red-600 dark:text-red-400">{err('contacto.telefono')}</p>
 					{/if}
 				</div>
-				
+
 				<!-- Correo Electrónico -->
 				<div>
 					<label for="correoElectronico" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -326,18 +278,16 @@
 						id="correoElectronico"
 						bind:value={formData.contacto.correoElectronico}
 						placeholder="contacto@empresa.com"
-						class="w-full px-4 py-2 border {getErrorMessage('contacto.correoElectronico')
-							? 'border-red-500 dark:border-red-500'
-							: 'border-gray-300 dark:border-gray-600'} rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+						class="w-full px-4 py-2 border {err('contacto.correoElectronico') ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'} rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
 					/>
-					{#if getErrorMessage('contacto.correoElectronico')}
-						<p class="mt-1 text-sm text-red-600 dark:text-red-400">{getErrorMessage('contacto.correoElectronico')}</p>
+					{#if err('contacto.correoElectronico')}
+						<p class="mt-1 text-sm text-red-600 dark:text-red-400">{err('contacto.correoElectronico')}</p>
 					{/if}
 				</div>
 			</div>
-		</div>
-		
-		<!-- Botones de Acción -->
+		</section>
+
+		<!-- Botones -->
 		<div class="flex items-center justify-end space-x-3 pt-4 border-t border-gray-200 dark:border-gray-700">
 			<button
 				type="button"

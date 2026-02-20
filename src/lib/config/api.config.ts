@@ -26,6 +26,17 @@ export const API_ENDPOINTS = {
 		representante: '/api/perfil-empresarial/representante',
 		datosBancarios: '/api/perfil-empresarial/datos-bancarios'
 	},
+	// ── Empresas del consorcio ──────────────────────────────────────────────
+	consortium: {
+		list:   (companyId: string) => `/api/Consortium/${companyId}`,
+		detail: (companyId: string, consortiumCompanyId: string) =>
+			`/api/Consortium/${companyId}/${consortiumCompanyId}`,
+		create: '/api/Consortium',
+		update: '/api/Consortium',
+		delete: (companyId: string, consortiumCompanyId: string) =>
+			`/api/Consortium/${companyId}/${consortiumCompanyId}`
+	},
+	// ── (legado — reemplazado por consortium) ───────────────────────────────
 	empresas: {
 		consorciadas: '/api/empresas-consorciadas',
 		byId: (id: string) => `/api/empresas-consorciadas/${id}`
@@ -36,7 +47,7 @@ export const API_ENDPOINTS = {
 		descargar: (id: string) => `/api/documentos/${id}/descargar`
 	},
 	document: {
-		generateAnnexes: '/api/Document/generate-annexes',
+		generateAnnexes: '/api/Document/generate-annexes-single',
 		recent: '/api/Document/recent',
 		delete: (id: string) => `/api/Document/${id}`
 	}
