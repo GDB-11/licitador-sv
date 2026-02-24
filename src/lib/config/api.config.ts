@@ -48,6 +48,7 @@ export const API_ENDPOINTS = {
 	},
 	document: {
 		generateAnnexesSingle: '/api/Document/generate-annexes-single',
+		generateAnnexesConsortium: '/api/Document/generate-annexes-consortium',
 		recent: '/api/Document/recent',
 		delete: (id: string) => `/api/Document/${id}`
 	}
