@@ -16,14 +16,11 @@ export { wizardAnexosStore } from './stores/wizard-anexos.svelte';
 
 // Tipos
 export type {
-	TipoParticipacion,
 	EstadoWizard,
 	ConfiguracionAnexos,
-	MiembroConsorcio,
 	Anexo1Data,
 	Anexo2Data,
 	Anexo3Data,
 	WizardAnexosState,
-	DocumentoGenerado,
-	EmpresaConsorcio
+	DocumentoGenerado
 } from './types';

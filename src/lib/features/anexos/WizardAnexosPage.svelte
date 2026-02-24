@@ -6,8 +6,7 @@
 		ConfiguracionAnexos, 
 		Anexo1Data, 
 		Anexo2Data, 
-		Anexo3Data,
-		EmpresaConsorcio 
+		Anexo3Data
 	} from './types';
 	
 	// Componentes
@@ -18,14 +17,9 @@
 	import PasoAnexo3 from './components/PasoAnexo3.svelte';
 	import PasoResumen from './components/PasoResumen.svelte';
 
-	let empresasDisponibles = $state<EmpresaConsorcio[]>([]);
-
 	onMount(async () => {
 		// Load company data for auto-population
 		await wizardAnexosStore.fetchCompanyData();
-		
-		// Cargar empresas disponibles para consorcio (if needed in the future)
-		// empresasDisponibles = await wizardAnexosStore.obtenerEmpresasConsorcio();
 	});
 
 	function handleGuardarConfiguracion(config: ConfiguracionAnexos) {
@@ -105,9 +99,7 @@
 				<PasoAnexo1
 					onGuardar={handleGuardarAnexo1}
 					onRegresar={() => wizardAnexosStore.anterior()}
-					tipoParticipacion={wizardAnexosStore.configuracion?.tipoParticipacion || 'individual'}
 					datosIniciales={wizardAnexosStore.anexo1}
-					empresasDisponibles={empresasDisponibles}
 				/>
 			{:else if wizardAnexosStore.pasoActual === 'anexo2'}
 				<PasoAnexo2

@@ -7,8 +7,7 @@ import type {
 	Anexo1Data,
 	Anexo2Data,
 	Anexo3Data,
-	DocumentoGenerado,
-	EmpresaConsorcio
+	DocumentoGenerado
 } from '../types';
 import { API_BASE_URL, API_ENDPOINTS, STORAGE_KEYS } from '$lib/config/api.config';
 import type { CompanyDetailsResponse } from '$lib/features/perfil-empresarial/types';
@@ -138,7 +137,6 @@ class WizardAnexosStore {
 			// Auto-populate Anexo 1, 2, and 3 with company data
 			if (!this.state.anexo1) {
 				this.state.anexo1 = {
-					tipoParticipacion: 'individual',
 					razonSocial: companyDetails.razonSocial,
 					ruc: companyDetails.ruc,
 					domicilioLegal: companyDetails.domicilioLegal,
@@ -204,50 +202,6 @@ class WizardAnexosStore {
 	guardarAnexo3(data: Anexo3Data) {
 		this.state.anexo3 = data;
 		this.state.validationErrors = {};
-	}
-
-	// Obtener empresas disponibles para consorcio (API simulada)
-	async obtenerEmpresasConsorcio(): Promise<EmpresaConsorcio[]> {
-		this.state.isLoading = true;
-		this.state.error = null;
-
-		try {
-			// TODO: Reemplazar con llamada real a la API
-			// const response = await fetch('/api/empresas/consorcio');
-			// const data = await response.json();
-
-			// Simulación
-			await new Promise((resolve) => setTimeout(resolve, 500));
-
-			return [
-				{
-					id: 1,
-					razonSocial: 'CONSTRUCTORA ANDINA S.A.C.',
-					ruc: '20543212345',
-					email: 'contacto@andina.pe',
-					telefono: '01-4567890'
-				},
-				{
-					id: 2,
-					razonSocial: 'INGENIEROS UNIDOS S.R.L.',
-					ruc: '20543298765',
-					email: 'info@ingenierosunidos.pe',
-					telefono: '01-9876543'
-				},
-				{
-					id: 3,
-					razonSocial: 'OBRAS CIVILES DEL SUR E.I.R.L.',
-					ruc: '20543245678',
-					email: 'ventas@obrasciviles.pe',
-					telefono: '054-234567'
-				}
-			];
-		} catch (err) {
-			this.state.error = err instanceof Error ? err.message : 'Error al cargar empresas';
-			return [];
-		} finally {
-			this.state.isLoading = false;
-		}
 	}
 
 	// Generar documentos (API real)

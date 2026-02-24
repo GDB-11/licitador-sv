@@ -1,6 +1,6 @@
 <!-- src/lib/features/anexos/components/PasoConfiguracion.svelte -->
  <script lang="ts">
-	import type { ConfiguracionAnexos, TipoParticipacion } from '../types';
+	import type { ConfiguracionAnexos } from '../types';
 
 	interface Props {
 		onGuardar: (config: ConfiguracionAnexos) => void;
@@ -9,7 +9,6 @@
 
 	let { onGuardar, datosIniciales = null }: Props = $props();
 
-	let tipoParticipacion = $state<TipoParticipacion>(datosIniciales?.tipoParticipacion || 'individual');
 	let numeroProceso = $state(datosIniciales?.numeroProceso || '');
 	let entidad = $state(datosIniciales?.entidad || '');
 	let objeto = $state(datosIniciales?.objeto || '');
@@ -48,7 +47,6 @@
 		}
 
 		onGuardar({
-			tipoParticipacion,
 			numeroProceso,
 			entidad,
 			objeto,
@@ -67,74 +65,6 @@
 
 	<form onsubmit={handleSubmit} class="space-y-6">
 		<!-- Tipo de participación -->
-		<div>
-			<label class="block text-sm font-medium text-gray-900 dark:text-white mb-3">
-				Tipo de Participación
-			</label>
-			<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-				<button
-					type="button"
-					onclick={() => (tipoParticipacion = 'individual')}
-					class="p-4 border-2 rounded-lg text-left transition-all
-						{tipoParticipacion === 'individual'
-							? 'border-blue-600 dark:border-blue-500 bg-blue-50 dark:bg-blue-950'
-							: 'border-gray-300 dark:border-gray-700 hover:border-blue-400 dark:hover:border-blue-600'}"
-				>
-					<div class="flex items-start space-x-3">
-						<div
-							class="flex-shrink-0 w-5 h-5 rounded-full border-2 mt-0.5
-							{tipoParticipacion === 'individual'
-								? 'border-blue-600 dark:border-blue-500 bg-blue-600 dark:bg-blue-500'
-								: 'border-gray-300 dark:border-gray-700'}"
-						>
-							{#if tipoParticipacion === 'individual'}
-								<div class="w-full h-full flex items-center justify-center">
-									<div class="w-2 h-2 bg-white rounded-full"></div>
-								</div>
-							{/if}
-						</div>
-						<div>
-							<h3 class="font-semibold text-gray-900 dark:text-white">Individual</h3>
-							<p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
-								Participa solo mi empresa
-							</p>
-						</div>
-					</div>
-				</button>
-
-				<button
-					type="button"
-					onclick={() => (tipoParticipacion = 'consorcio')}
-					class="p-4 border-2 rounded-lg text-left transition-all
-						{tipoParticipacion === 'consorcio'
-							? 'border-blue-600 dark:border-blue-500 bg-blue-50 dark:bg-blue-950'
-							: 'border-gray-300 dark:border-gray-700 hover:border-blue-400 dark:hover:border-blue-600'}"
-				>
-					<div class="flex items-start space-x-3">
-						<div
-							class="flex-shrink-0 w-5 h-5 rounded-full border-2 mt-0.5
-							{tipoParticipacion === 'consorcio'
-								? 'border-blue-600 dark:border-blue-500 bg-blue-600 dark:bg-blue-500'
-								: 'border-gray-300 dark:border-gray-700'}"
-						>
-							{#if tipoParticipacion === 'consorcio'}
-								<div class="w-full h-full flex items-center justify-center">
-									<div class="w-2 h-2 bg-white rounded-full"></div>
-								</div>
-							{/if}
-						</div>
-						<div>
-							<h3 class="font-semibold text-gray-900 dark:text-white">Consorcio</h3>
-							<p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
-								Participo junto con otras empresas
-							</p>
-						</div>
-					</div>
-				</button>
-			</div>
-		</div>
-
-		<!-- Número de proceso -->
 		<div>
 			<label for="numeroProceso" class="block text-sm font-medium text-gray-900 dark:text-white mb-2">
 				Número de Proceso <span class="text-red-500">*</span>

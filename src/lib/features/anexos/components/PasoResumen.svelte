@@ -81,12 +81,6 @@
 			</h3>
 			<div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 text-xs sm:text-sm">
 				<div class="bg-white dark:bg-gray-800/50 rounded-lg p-3 shadow-sm">
-					<span class="block text-gray-600 dark:text-gray-400 mb-1">Tipo de Participación</span>
-					<p class="font-semibold text-gray-900 dark:text-white capitalize">
-						{configuracion.tipoParticipacion === 'individual' ? 'Individual' : 'Consorcio'}
-					</p>
-				</div>
-				<div class="bg-white dark:bg-gray-800/50 rounded-lg p-3 shadow-sm">
 					<span class="block text-gray-600 dark:text-gray-400 mb-1">Número de Proceso</span>
 					<p class="font-semibold text-gray-900 dark:text-white break-all">{configuracion.numeroProceso}</p>
 				</div>
@@ -120,47 +114,20 @@
 				</div>
 			</h3>
 			<div class="text-xs sm:text-sm space-y-3">
-				{#if anexo1.tipoParticipacion === 'individual'}
-					<div class="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-3">
-						<span class="block text-gray-600 dark:text-gray-400 mb-1">Empresa</span>
-						<p class="font-semibold text-gray-900 dark:text-white break-words">
-							{anexo1.razonSocial}
-						</p>
-						<p class="text-xs text-gray-600 dark:text-gray-400 mt-1">RUC: {anexo1.ruc}</p>
-					</div>
-					<div class="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-3">
-						<span class="block text-gray-600 dark:text-gray-400 mb-1">Representante Legal</span>
-						<p class="font-semibold text-gray-900 dark:text-white">
-							{anexo1.representanteLegal}
-						</p>
-						<p class="text-xs text-gray-600 dark:text-gray-400 mt-1">DNI: {anexo1.dniRepresentante}</p>
-					</div>
-				{:else}
-					<div class="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-3">
-						<span class="block text-gray-600 dark:text-gray-400 mb-1">Consorcio</span>
-						<p class="font-semibold text-gray-900 dark:text-white">{anexo1.nombreConsorcio}</p>
-					</div>
-					<div class="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-3">
-						<span class="block text-gray-600 dark:text-gray-400 mb-2">Miembros del Consorcio</span>
-						<ul class="space-y-2">
-							{#each anexo1.miembros || [] as miembro}
-								<li class="flex items-start justify-between gap-2 text-gray-900 dark:text-white p-2 bg-white dark:bg-gray-900/50 rounded">
-									<div class="flex-1 min-w-0">
-										<p class="font-medium truncate">{miembro.nombreEmpresa}</p>
-										<p class="text-xs text-gray-600 dark:text-gray-400">
-											Participación: {miembro.porcentajeParticipacion}%
-										</p>
-									</div>
-									{#if miembro.esLider}
-										<span class="flex-shrink-0 px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 text-xs font-semibold rounded">
-											Líder
-										</span>
-									{/if}
-								</li>
-							{/each}
-						</ul>
-					</div>
-				{/if}
+				<div class="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-3">
+					<span class="block text-gray-600 dark:text-gray-400 mb-1">Empresa</span>
+					<p class="font-semibold text-gray-900 dark:text-white break-words">
+						{anexo1.razonSocial}
+					</p>
+					<p class="text-xs text-gray-600 dark:text-gray-400 mt-1">RUC: {anexo1.ruc}</p>
+				</div>
+				<div class="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-3">
+					<span class="block text-gray-600 dark:text-gray-400 mb-1">Representante Legal</span>
+					<p class="font-semibold text-gray-900 dark:text-white">
+						{anexo1.representanteLegal}
+					</p>
+					<p class="text-xs text-gray-600 dark:text-gray-400 mt-1">DNI: {anexo1.dniRepresentante}</p>
+				</div>
 				<div class="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-3">
 					<span class="block text-gray-600 dark:text-gray-400 mb-1">Notificaciones por Email</span>
 					<p class="font-semibold text-gray-900 dark:text-white break-all">
