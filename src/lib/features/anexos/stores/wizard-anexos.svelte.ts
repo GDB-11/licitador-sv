@@ -219,6 +219,8 @@ class WizardAnexosStore {
 			// Build minimal payload
 			const payload = {
 				licitacionNumber: this.state.configuracion?.numeroProceso || '',
+				numeroFicha: this.state.configuracion?.numeroFicha || '',
+				numeroAsiento: this.state.configuracion?.numeroAsiento || '',
 				entityName: this.state.configuracion?.entidad || '',
 				purchaseObject: this.state.configuracion?.objeto || '',
 				city: this.state.configuracion?.ciudad || '',

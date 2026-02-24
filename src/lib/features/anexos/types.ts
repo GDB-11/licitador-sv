@@ -5,6 +5,8 @@ export type EstadoWizard = 'configuracion' | 'anexo1' | 'anexo2' | 'anexo3' | 'r
 // Configuración inicial del wizard
 export interface ConfiguracionAnexos {
 	numeroProceso: string;
+	numeroFicha: string;
+	numeroAsiento: string;
 	entidad: string;
 	objeto: string;
 	ciudad: string;

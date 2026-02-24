@@ -34,6 +34,8 @@ export interface MiembroConsorcioSeleccionado {
 
 export interface ConfiguracionConsorcio {
 	numeroProceso: string;
+	numeroFicha: string;
+	numeroAsiento: string;
 	entidad: string;
 	objeto: string;
 	ciudad: string;
@@ -106,6 +108,8 @@ export interface ConsorcioBroMiembro {
 
 export interface GenerateAnnexesConsortiumRequest {
 	licitacionNumber: string;
+	numeroFicha: string;
+	numeroAsiento: string;
 	entityName: string;
 	purchaseObject: string;
 	city: string;

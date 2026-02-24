@@ -10,6 +10,8 @@
 	let { onGuardar, datosIniciales = null }: Props = $props();
 
 	let numeroProceso = $state(datosIniciales?.numeroProceso || '');
+	let numeroFicha = $state(datosIniciales?.numeroFicha || '');
+	let numeroAsiento = $state(datosIniciales?.numeroAsiento || '');
 	let entidad = $state(datosIniciales?.entidad || '');
 	let objeto = $state(datosIniciales?.objeto || '');
 	let ciudad = $state(datosIniciales?.ciudad || '');
@@ -21,6 +23,14 @@
 
 		if (!numeroProceso.trim()) {
 			nuevosErrores.numeroProceso = 'El número de proceso es obligatorio';
+		}
+
+		if (!numeroFicha.trim()) {
+			nuevosErrores.numeroFicha = 'El número de ficha es obligatorio';
+		}
+
+		if (!numeroAsiento.trim()) {
+			nuevosErrores.numeroAsiento = 'El número de asiento es obligatorio';
 		}
 
 		if (!entidad.trim()) {
@@ -48,6 +58,8 @@
 
 		onGuardar({
 			numeroProceso,
+			numeroFicha,
+			numeroAsiento,
 			entidad,
 			objeto,
 			ciudad
@@ -83,6 +95,50 @@
 			/>
 			{#if errores.numeroProceso}
 				<p class="mt-1 text-sm text-red-500">{errores.numeroProceso}</p>
+			{/if}
+		</div>
+
+		<!-- Número de Ficha -->
+		<div>
+			<label for="numeroFicha" class="block text-sm font-medium text-gray-900 dark:text-white mb-2">
+				Número de Ficha <span class="text-red-500">*</span>
+			</label>
+			<input
+				type="text"
+				id="numeroFicha"
+				bind:value={numeroFicha}
+				placeholder="Ej: F-2025-001"
+				class="w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-800 
+					border-gray-300 dark:border-gray-700 
+					text-gray-900 dark:text-white
+					placeholder-gray-500 dark:placeholder-gray-400
+					focus:ring-2 focus:ring-blue-500 focus:border-transparent
+					{errores.numeroFicha ? 'border-red-500' : ''}"
+			/>
+			{#if errores.numeroFicha}
+				<p class="mt-1 text-sm text-red-500">{errores.numeroFicha}</p>
+			{/if}
+		</div>
+
+		<!-- Número de Asiento -->
+		<div>
+			<label for="numeroAsiento" class="block text-sm font-medium text-gray-900 dark:text-white mb-2">
+				Número de Asiento <span class="text-red-500">*</span>
+			</label>
+			<input
+				type="text"
+				id="numeroAsiento"
+				bind:value={numeroAsiento}
+				placeholder="Ej: A-2025-001"
+				class="w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-800 
+					border-gray-300 dark:border-gray-700 
+					text-gray-900 dark:text-white
+					placeholder-gray-500 dark:placeholder-gray-400
+					focus:ring-2 focus:ring-blue-500 focus:border-transparent
+					{errores.numeroAsiento ? 'border-red-500' : ''}"
+			/>
+			{#if errores.numeroAsiento}
+				<p class="mt-1 text-sm text-red-500">{errores.numeroAsiento}</p>
 			{/if}
 		</div>
 

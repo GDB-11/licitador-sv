@@ -217,6 +217,8 @@ class WizardAnexosConsorcioStore {
 
 			const payload: GenerateAnnexesConsortiumRequest = {
 				licitacionNumber: cfg.numeroProceso,
+				numeroFicha: cfg.numeroFicha,
+				numeroAsiento: cfg.numeroAsiento,
 				entityName: cfg.entidad,
 				purchaseObject: cfg.objeto,
 				city: cfg.ciudad,
